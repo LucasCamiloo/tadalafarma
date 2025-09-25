@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Backoffice - Tadalafarma</title>
+</head>
+<body>
+    <a th:href="@{/logout}">Logout</a>
+    
+    <h1>Tela Principal do Backoffice</h1>
+    
+    <p><strong>Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+    
+    <div th:if="${param.erro}" th:text="${param.erro}"></div>
+    <div th:if="${param.info}" th:text="${param.info}"></div>
+    
+    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ADMINISTRADOR}">
+        <p><strong>Listar usuários</strong></p>
+        <a href="/usuarios">Acessar Lista de Usuários</a>
+    </div>
+    
+    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ESTOQUISTA}">
+        <p>Acesso restrito. Apenas administradores podem listar usuários.</p>
+    </div>
+</body>
+</html>

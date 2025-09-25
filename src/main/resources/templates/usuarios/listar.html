@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listar Usuários - Backoffice</title>
+</head>
+<body>
+    <h1>Lista de Usuários</h1>
+    
+    <div th:if="${param.sucesso}" th:text="${param.sucesso}"></div>
+    <div th:if="${param.erro}" th:text="${param.erro}"></div>
+    
+    <p><strong>Instruções:</strong></p>
+    <p>• Digite o <strong>ID</strong> do usuário para acessar suas opções</p>
+    <p>• Digite <strong>0</strong> para voltar à tela principal do backoffice</p>
+    <p>• Digite <strong>I</strong> para incluir um novo usuário</p>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Grupo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.sequencialId}"></td>
+                <td th:text="${usuario.nome}"></td>
+                <td th:text="${usuario.email}"></td>
+                <td th:text="${usuario.statusTexto}"></td>
+                <td th:text="${usuario.grupo}"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <form method="post" th:action="@{/usuarios/acao}">
+        <label for="acao">Digite sua opção (ID do usuário, 0 para voltar, I para incluir):</label>
+        <input type="text" id="acao" name="acao" required><br><br>
+        <button type="submit">Confirmar</button>
+    </form>
+    
+    <br><br>
+    <a th:href="@{/backoffice}">Voltar ao Backoffice</a>
+</body>
+</html>

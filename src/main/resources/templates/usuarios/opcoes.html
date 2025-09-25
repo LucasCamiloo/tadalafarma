@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Opções do Usuário - Backoffice</title>
+</head>
+<body>
+    <h1>Opções do Usuário</h1>
+    
+    <div th:if="${param.sucesso}" th:text="${param.sucesso}"></div>
+    <div th:if="${param.erro}" th:text="${param.erro}"></div>
+    
+    <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
+    <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
+    <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${usuario.statusTexto}"></span></p>
+    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+    
+    <h2>Selecione uma opção:</h2>
+    
+    <ul>
+        <li><strong>1</strong> - Alterar usuário</li>
+        <li><strong>2</strong> - Alterar senha</li>
+        <li><strong>3</strong> - Ativar/Desativar</li>
+        <li><strong>4</strong> - Voltar a listar usuário</li>
+    </ul>
+    
+    <form method="post" th:action="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">
+        <label for="opcao">Digite o número da opção desejada:</label>
+        <input type="number" id="opcao" name="opcao" min="1" max="4" required><br><br>
+        <button type="submit">Confirmar</button>
+    </form>
+    
+    <br><br>
+    <a th:href="@{/usuarios}">Voltar à Lista de Usuários</a>
+</body>
+</html>

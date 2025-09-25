@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Backoffice Tadalafarma</title>
+</head>
+<body>
+    <h1>Backoffice Tadalafarma</h1>
+    <p>Login de Usuários</p>
+    
+    <div th:if="${erro}" th:text="${erro}"></div>
+    
+    <form method="post" th:action="@{/login}">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required><br><br>
+        
+        <button type="submit">Entrar</button>
+    </form>
+    
+    <p><strong>Atenção:</strong> Esta área é exclusiva para usuários do backoffice (Administradores e Estoquistas).</p>
+</body>
+</html>

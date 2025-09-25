@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alterar Senha - Backoffice</title>
+</head>
+<body>
+    <h1>Alterar Senha</h1>
+    
+    <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
+    <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
+    <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${usuario.statusTexto}"></span></p>
+    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+    
+    <div th:if="${erro}" th:text="${erro}"></div>
+    
+    <form method="post" th:action="@{/usuarios/{id}/senha(id=${usuario.sequencialId})}">
+        <label for="novaSenha">Nova Senha *:</label>
+        <input type="password" id="novaSenha" name="novaSenha" required><br><br>
+        
+        <label for="confirmaSenha">Confirmar Nova Senha *:</label>
+        <input type="password" id="confirmaSenha" name="confirmaSenha" required><br><br>
+        
+        <p><strong>Deseja salvar a nova senha? (Y/N)</strong></p>
+        <button type="submit" name="salvar" value="Y">Sim (Y)</button>
+        <button type="submit" name="salvar" value="N">Não (N)</button>
+    </form>
+    
+    <br><br>
+    <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">Voltar às Opções</a>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alterar Status - Backoffice</title>
+</head>
+<body>
+    <h1 th:text="${acao + ' Usuário'}"></h1>
+    
+    <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
+    <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
+    <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+    <p><strong>Status Atual:</strong> <span th:text="${usuario.statusTexto}"></span></p>
+    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+    
+    <h3 th:text="${acao + ' Usuário'}"></h3>
+    <p>Status atual: <strong th:text="${usuario.statusTexto}"></strong></p>
+    <p>Novo status: <strong th:text="${novoStatus ? 'Ativo' : 'Inativo'}"></strong></p>
+    
+    <form method="post" th:action="@{/usuarios/{id}/status(id=${usuario.sequencialId})}">
+        <p><strong th:text="'Deseja ' + ${acao.toLowerCase()} + ' este usuário? (Y/N)'"></strong></p>
+        <button type="submit" name="salvar" value="Y" th:text="'Sim - ' + ${acao} + ' (Y)'"></button>
+        <button type="submit" name="salvar" value="N">Não (N)</button>
+    </form>
+    
+    <br><br>
+    <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">Voltar às Opções</a>
+</body>
+</html>
