@@ -3,26 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Backoffice - Tadalafarma</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f0f0f0; padding: 15px; margin-bottom: 20px; }
+        .user-info { background-color: #e7f3ff; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .menu-section { margin-bottom: 20px; }
+        .menu-section h3 { color: #333; margin-bottom: 10px; }
+        .menu-button { display: inline-block; background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; margin-right: 10px; margin-bottom: 10px; }
+        .menu-button:hover { background-color: #45a049; }
+        .logout-link { color: #f44336; text-decoration: none; }
+        .logout-link:hover { text-decoration: underline; }
+        .message { padding: 10px; margin-bottom: 20px; border-radius: 4px; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
 </head>
 <body>
-    <a th:href="@{/logout}">Logout</a>
-    
-    <h1>Tela Principal do Backoffice</h1>
-    
-    <p><strong>Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
-    
-    <div th:if="${param.erro}" th:text="${param.erro}"></div>
-    <div th:if="${param.info}" th:text="${param.info}"></div>
-    
-    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ADMINISTRADOR}">
-        <p><strong>Listar usuários</strong></p>
-        <a href="/usuarios">Acessar Lista de Usuários</a>
+    <div class="header">
+        <h1>Tela Principal do Backoffice</h1>
+        <a href="/logout" class="logout-link">Logout</a>
     </div>
     
-    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ESTOQUISTA}">
-        <p>Acesso restrito. Apenas administradores podem listar usuários.</p>
+    <div class="user-info">
+        <p><strong>Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+        <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+    </div>
+    
+    <div th:if="${param.erro}" class="message error">
+        <span th:text="${param.erro}"></span>
+    </div>
+    <div th:if="${param.info}" class="message info">
+        <span th:text="${param.info}"></span>
+    </div>
+    
+    <div class="menu-section">
+        <h3>Produtos</h3>
+        <a href="/produtos" class="menu-button">Listar Produtos</a>
+    </div>
+    
+    <div th:if="${isAdmin}" class="menu-section">
+        <h3>Usuários</h3>
+        <a href="/usuarios" class="menu-button">Listar Usuários</a>
+    </div>
+    
+    <div th:if="${!isAdmin}" class="menu-section">
+        <p>Acesso restrito. Apenas administradores podem gerenciar usuários.</p>
     </div>
 </body>
 </html>
