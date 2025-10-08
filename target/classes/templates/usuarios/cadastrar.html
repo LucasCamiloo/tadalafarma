@@ -2,38 +2,69 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Usuário - Backoffice</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Cadastrar Usuário</h1>
-    
-    <div th:if="${erro}" th:text="${erro}"></div>
-    
-    <form method="post" th:action="@{/usuarios/cadastrar}">
-        <label for="nome">Nome *:</label>
-        <input type="text" id="nome" name="nome" th:value="${nome}" required><br><br>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>➕ Cadastrar Usuário</h1>
+                <p class="subtitle">Adicionar novo usuário ao sistema</p>
+            </div>
+            <a href="/usuarios">← Voltar</a>
+        </div>
         
-        <label for="cpf">CPF *:</label>
-        <input type="text" id="cpf" name="cpf" th:value="${cpf}" placeholder="00000000000" maxlength="11" required><br><br>
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
         
-        <label for="email">Email *:</label>
-        <input type="email" id="email" name="email" th:value="${email}" required><br><br>
-        
-        <label for="grupo">Grupo *:</label>
-        <select id="grupo" name="grupo" required>
-            <option value="">Selecione um grupo</option>
-            <option value="ADMINISTRADOR" th:selected="${grupo == 'ADMINISTRADOR'}">Administrador</option>
-            <option value="ESTOQUISTA" th:selected="${grupo == 'ESTOQUISTA'}">Estoquista</option>
-        </select><br><br>
-        
-        <label for="senha">Senha *:</label>
-        <input type="password" id="senha" name="senha" required><br><br>
-        
-        <label for="confirmaSenha">Confirmar Senha *:</label>
-        <input type="password" id="confirmaSenha" name="confirmaSenha" required><br><br>
-        
-        <button type="submit">Cadastrar</button>
-        <a th:href="@{/usuarios}">Cancelar</a>
-    </form>
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/usuarios/cadastrar}">
+                    <div class="form-group">
+                        <label for="nome">👤 Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" th:value="${nome}" placeholder="Digite o nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cpf">📄 CPF *</label>
+                        <input type="text" id="cpf" name="cpf" th:value="${cpf}" placeholder="00000000000 (apenas números)" maxlength="11" required>
+                        <small>Apenas números, sem pontos ou traços</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">📧 Email *</label>
+                        <input type="email" id="email" name="email" th:value="${email}" placeholder="usuario@exemplo.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grupo">🔑 Grupo de Acesso *</label>
+                        <select id="grupo" name="grupo" required>
+                            <option value="">Selecione um grupo...</option>
+                            <option value="ADMINISTRADOR" th:selected="${grupo == 'ADMINISTRADOR'}">Administrador (Acesso Total)</option>
+                            <option value="ESTOQUISTA" th:selected="${grupo == 'ESTOQUISTA'}">Estoquista (Gestão de Estoque)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senha">🔒 Senha *</label>
+                        <input type="password" id="senha" name="senha" placeholder="Digite uma senha segura" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmaSenha">🔒 Confirmar Senha *</label>
+                        <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Digite a senha novamente" required>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">✓ Cadastrar Usuário</button>
+                        <a href="/usuarios" class="btn btn-secondary">✕ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

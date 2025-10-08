@@ -4,77 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizar Produto - Tadalafarma</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header { background-color: #f0f0f0; padding: 10px; margin-bottom: 20px; }
-        .product-container { display: flex; gap: 30px; max-width: 1000px; }
-        .product-images { flex: 1; }
-        .product-details { flex: 1; }
-        .main-image { width: 100%; max-width: 400px; height: 300px; object-fit: cover; border: 1px solid #ddd; margin-bottom: 15px; }
-        .thumbnail-container { display: flex; gap: 10px; flex-wrap: wrap; }
-        .thumbnail { width: 80px; height: 80px; object-fit: cover; border: 2px solid #ddd; cursor: pointer; }
-        .thumbnail.active { border-color: #4CAF50; }
-        .product-info h1 { color: #333; margin-bottom: 10px; }
-        .product-info .rating { color: #FF9800; font-size: 18px; margin-bottom: 15px; }
-        .product-info .price { font-size: 24px; font-weight: bold; color: #4CAF50; margin-bottom: 15px; }
-        .product-info .description { line-height: 1.6; margin-bottom: 20px; }
-        .product-info .stock { margin-bottom: 20px; }
-        .product-info .stock.in-stock { color: #4CAF50; }
-        .product-info .stock.out-of-stock { color: #f44336; }
-        .buy-button { background-color: #4CAF50; color: white; padding: 15px 30px; font-size: 18px; border: none; border-radius: 4px; cursor: pointer; }
-        .buy-button:disabled { background-color: #ccc; cursor: not-allowed; }
-        .btn { padding: 10px 20px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .btn:hover { opacity: 0.8; }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Visualizar Produto</h1>
-        <a href="/produtos">← Voltar à Lista</a>
-    </div>
-
-    <div class="product-container">
-        <div class="product-images">
-            <img th:src="${imagens.empty} ? '/images/no-image.png' : ${imagens[0].caminhoArquivo}" 
-                 th:alt="${produto.nome}" class="main-image" id="mainImage">
-            
-            <div th:if="${!imagens.empty}" class="thumbnail-container">
-                <img th:each="imagem, iterStat : ${imagens}" 
-                     th:src="${imagem.caminhoArquivo}" 
-                     th:alt="${produto.nome}"
-                     class="thumbnail"
-                     th:class="${iterStat.first} ? 'thumbnail active' : 'thumbnail'"
-                     th:onclick="'changeMainImage(this.src)'">
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>👁️ Visualizar Produto</h1>
+                <p class="subtitle">Detalhes completos do produto</p>
             </div>
+            <a href="/produtos">← Voltar à Lista</a>
         </div>
 
-        <div class="product-details">
-            <div class="product-info">
-                <h1 th:text="${produto.nome}"></h1>
-                
-                <div class="rating">
-                    ⭐ <span th:text="${produto.avaliacaoFormatada}"></span>/5.0
+        <div class="content-wrapper">
+            <div class="product-container">
+                <div class="product-images">
+                    <div th:if="${imagens.empty}" class="no-image-placeholder">
+                        <span style="font-size: 80px;">📦</span>
+                        <p>Sem imagem disponível</p>
+                    </div>
+                    <img th:if="${!imagens.empty}" th:src="${imagens[0].caminhoArquivo}" 
+                         th:alt="${produto.nome}" class="main-image" id="mainImage">
+                    
+                    <div th:if="${!imagens.empty}" class="thumbnail-container">
+                        <img th:each="imagem, iterStat : ${imagens}" 
+                             th:src="${imagem.caminhoArquivo}" 
+                             th:alt="${produto.nome}"
+                             class="thumbnail"
+                             th:class="${iterStat.first} ? 'thumbnail active' : 'thumbnail'"
+                             th:onclick="'changeMainImage(this.src)'">
+                    </div>
                 </div>
-                
-                <div class="price" th:text="${produto.precoFormatado}"></div>
-                
-                <div class="description" th:text="${produto.descricaoDetalhada}"></div>
-                
-                <div class="stock" th:class="${produto.quantidadeEstoque > 0} ? 'in-stock' : 'out-of-stock'">
-                    <strong>Estoque:</strong> 
-                    <span th:text="${produto.quantidadeEstoque}"></span> unidades
+
+                <div class="product-details">
+                    <div class="product-info">
+                        <h1 th:text="${produto.nome}"></h1>
+                        
+                        <div class="rating">
+                            ⭐ <span th:text="${produto.avaliacaoFormatada}"></span>/5.0
+                        </div>
+                        
+                        <div class="price" th:text="${produto.precoFormatado}"></div>
+                        
+                        <div class="description" th:text="${produto.descricaoDetalhada}"></div>
+                        
+                        <div class="stock" th:class="${produto.quantidadeEstoque > 0} ? 'stock in-stock' : 'stock out-of-stock'">
+                            <strong>📦 Estoque:</strong> 
+                            <span th:text="${produto.quantidadeEstoque}"></span> unidades
+                            <span th:if="${produto.quantidadeEstoque > 0}"> disponíveis</span>
+                            <span th:if="${produto.quantidadeEstoque == 0}"> - Produto esgotado</span>
+                        </div>
+                        
+                        <button class="buy-button" disabled>
+                            🛒 Comprar (Desabilitado - Modo Visualização)
+                        </button>
+                    </div>
                 </div>
-                
-                <button class="buy-button" disabled>
-                    Comprar (Desabilitado - Modo Visualização)
-                </button>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <a href="/produtos" class="btn btn-secondary">← Voltar à Lista</a>
+                <a th:href="@{/produtos/{id}/alterar(id=${produto.sequencialId})}" class="btn btn-primary">✏️ Editar Produto</a>
             </div>
         </div>
-    </div>
-
-    <div style="margin-top: 30px;">
-        <a href="/produtos" class="btn btn-secondary">Voltar à Lista</a>
     </div>
 
     <script>
@@ -92,3 +84,4 @@
     </script>
 </body>
 </html>
+

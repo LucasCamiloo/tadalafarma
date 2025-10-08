@@ -2,33 +2,59 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alterar Senha - Backoffice</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Alterar Senha</h1>
-    
-    <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
-    <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
-    <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-    <p><strong>Status:</strong> <span th:text="${usuario.statusTexto}"></span></p>
-    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
-    
-    <div th:if="${erro}" th:text="${erro}"></div>
-    
-    <form method="post" th:action="@{/usuarios/{id}/senha(id=${usuario.sequencialId})}">
-        <label for="novaSenha">Nova Senha *:</label>
-        <input type="password" id="novaSenha" name="novaSenha" required><br><br>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>🔒 Alterar Senha</h1>
+                <p class="subtitle">Redefinir senha do usuário</p>
+            </div>
+            <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">← Voltar</a>
+        </div>
         
-        <label for="confirmaSenha">Confirmar Nova Senha *:</label>
-        <input type="password" id="confirmaSenha" name="confirmaSenha" required><br><br>
+        <div class="user-info">
+            <h3 style="margin-bottom: 15px; color: var(--text-primary);">📋 Informações do Usuário</h3>
+            <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
+            <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
+            <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${usuario.statusTexto}"></span></p>
+            <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+        </div>
         
-        <p><strong>Deseja salvar a nova senha? (Y/N)</strong></p>
-        <button type="submit" name="salvar" value="Y">Sim (Y)</button>
-        <button type="submit" name="salvar" value="N">Não (N)</button>
-    </form>
-    
-    <br><br>
-    <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">Voltar às Opções</a>
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/usuarios/{id}/senha(id=${usuario.sequencialId})}">
+                    <div class="form-group">
+                        <label for="novaSenha">🔑 Nova Senha *</label>
+                        <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite a nova senha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmaSenha">🔑 Confirmar Nova Senha *</label>
+                        <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Digite a senha novamente" required>
+                    </div>
+                    
+                    <div class="message warning" style="margin: 25px 0;">
+                        <strong>⚠️ Confirmar Alteração</strong>
+                        <p style="margin: 10px 0 0 0;">Deseja salvar a nova senha para este usuário?</p>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" name="salvar" value="Y" class="btn btn-success">✓ Sim, Salvar (Y)</button>
+                        <button type="submit" name="salvar" value="N" class="btn btn-secondary">✕ Não, Cancelar (N)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -2,47 +2,73 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Usuários - Backoffice</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Lista de Usuários</h1>
-    
-    <div th:if="${param.sucesso}" th:text="${param.sucesso}"></div>
-    <div th:if="${param.erro}" th:text="${param.erro}"></div>
-    
-    <p><strong>Instruções:</strong></p>
-    <p>• Digite o <strong>ID</strong> do usuário para acessar suas opções</p>
-    <p>• Digite <strong>0</strong> para voltar à tela principal do backoffice</p>
-    <p>• Digite <strong>I</strong> para incluir um novo usuário</p>
-    
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Grupo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="usuario : ${usuarios}">
-                <td th:text="${usuario.sequencialId}"></td>
-                <td th:text="${usuario.nome}"></td>
-                <td th:text="${usuario.email}"></td>
-                <td th:text="${usuario.statusTexto}"></td>
-                <td th:text="${usuario.grupo}"></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <form method="post" th:action="@{/usuarios/acao}">
-        <label for="acao">Digite sua opção (ID do usuário, 0 para voltar, I para incluir):</label>
-        <input type="text" id="acao" name="acao" required><br><br>
-        <button type="submit">Confirmar</button>
-    </form>
-    
-    <br><br>
-    <a th:href="@{/backoffice}">Voltar ao Backoffice</a>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>👥 Usuários</h1>
+                <p class="subtitle">Gestão de Usuários do Sistema</p>
+            </div>
+            <a href="/backoffice">← Voltar</a>
+        </div>
+        
+        <div th:if="${param.sucesso}" class="message success">
+            <strong>✓ Sucesso:</strong> <span th:text="${param.sucesso}"></span>
+        </div>
+        <div th:if="${param.erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${param.erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div style="margin-bottom: 25px;">
+                <a href="/usuarios/cadastrar" class="btn btn-success">➕ Cadastrar Novo Usuário</a>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Grupo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td><strong th:text="${usuario.sequencialId}"></strong></td>
+                        <td th:text="${usuario.nome}"></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td>
+                            <span th:if="${usuario.status}" style="background: #d1fae5; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #065f46;">✓ Ativo</span>
+                            <span th:if="${!usuario.status}" style="background: #fee2e2; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #991b1b;">✕ Inativo</span>
+                        </td>
+                        <td>
+                            <span th:text="${usuario.grupo}" style="background: #dbeafe; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #1e40af;"></span>
+                        </td>
+                        <td class="actions">
+                            <a th:href="@{/usuarios/{id}/alterar(id=${usuario.sequencialId})}" class="action-btn edit-btn">✏️ Editar</a>
+                            <a th:href="@{/usuarios/{id}/senha(id=${usuario.sequencialId})}" class="action-btn view-btn">🔒 Senha</a>
+                            <form th:action="@{/usuarios/{id}/status(id=${usuario.sequencialId})}" method="get" style="display: inline;">
+                                <button type="submit" 
+                                        th:class="${usuario.status} ? 'action-btn status-btn' : 'action-btn status-btn active'"
+                                        th:text="${usuario.status} ? '🔴 Desativar' : '✓ Ativar'">
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div th:if="${usuarios.empty}" class="message info">
+                <strong>ℹ️ Informação:</strong> Nenhum usuário cadastrado no sistema.
+            </div>
+        </div>
+    </div>
 </body>
 </html>
