@@ -2,29 +2,57 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alterar Status - Backoffice</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1 th:text="${acao + ' Usuário'}"></h1>
-    
-    <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
-    <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
-    <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-    <p><strong>Status Atual:</strong> <span th:text="${usuario.statusTexto}"></span></p>
-    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
-    
-    <h3 th:text="${acao + ' Usuário'}"></h3>
-    <p>Status atual: <strong th:text="${usuario.statusTexto}"></strong></p>
-    <p>Novo status: <strong th:text="${novoStatus ? 'Ativo' : 'Inativo'}"></strong></p>
-    
-    <form method="post" th:action="@{/usuarios/{id}/status(id=${usuario.sequencialId})}">
-        <p><strong th:text="'Deseja ' + ${acao.toLowerCase()} + ' este usuário? (Y/N)'"></strong></p>
-        <button type="submit" name="salvar" value="Y" th:text="'Sim - ' + ${acao} + ' (Y)'"></button>
-        <button type="submit" name="salvar" value="N">Não (N)</button>
-    </form>
-    
-    <br><br>
-    <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">Voltar às Opções</a>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1 th:text="${acao + ' Usuário'}"></h1>
+                <p class="subtitle" th:text="'Alterar status do usuário'"></p>
+            </div>
+            <a th:href="@{/usuarios/{id}/opcoes(id=${usuario.sequencialId})}">← Voltar</a>
+        </div>
+        
+        <div class="user-info">
+            <h3 style="margin-bottom: 15px; color: var(--text-primary);">📋 Informações do Usuário</h3>
+            <p><strong>ID:</strong> <span th:text="${usuario.sequencialId}"></span></p>
+            <p><strong>Nome:</strong> <span th:text="${usuario.nome}"></span></p>
+            <p><strong>CPF:</strong> <span th:text="${usuario.cpf}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+            <p><strong>Status Atual:</strong> <span th:text="${usuario.statusTexto}"></span></p>
+            <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="card" style="padding: 25px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid var(--warning-color);">
+                <h3 style="color: var(--text-primary); margin-bottom: 15px;" th:text="${acao + ' Usuário'}"></h3>
+                <p style="font-size: 16px; margin-bottom: 10px;">
+                    <strong>Status Atual:</strong> 
+                    <span th:text="${usuario.statusTexto}" style="padding: 4px 12px; background: white; border-radius: 6px; font-weight: 600;"></span>
+                </p>
+                <p style="font-size: 16px;">
+                    <strong>Novo Status:</strong> 
+                    <span th:text="${novoStatus ? 'Ativo' : 'Inativo'}" style="padding: 4px 12px; background: white; border-radius: 6px; font-weight: 600; color: var(--secondary-color);" th:style="${novoStatus ? 'padding: 4px 12px; background: white; border-radius: 6px; font-weight: 600; color: #10b981;' : 'padding: 4px 12px; background: white; border-radius: 6px; font-weight: 600; color: #ef4444;'}"></span>
+                </p>
+            </div>
+            
+            <div class="card" style="margin-top: 25px;">
+                <form method="post" th:action="@{/usuarios/{id}/status(id=${usuario.sequencialId})}">
+                    <div class="message warning">
+                        <strong>⚠️ Confirmar Alteração</strong>
+                        <p style="margin: 10px 0 0 0;" th:text="'Deseja ' + ${acao.toLowerCase()} + ' este usuário?'"></p>
+                    </div>
+                    
+                    <div class="button-group" style="margin-top: 20px;">
+                        <button type="submit" name="salvar" value="Y" class="btn btn-success" th:text="'✓ Sim - ' + ${acao} + ' (Y)'"></button>
+                        <button type="submit" name="salvar" value="N" class="btn btn-secondary">✕ Não, Cancelar (N)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -22,3 +22,6 @@ public interface ProdutoImagemRepository extends MongoRepository<ProdutoImagem, 
     // Contar imagens de um produto
     long countByProdutoSequencialId(Long produtoSequencialId);
 }
+
+
+

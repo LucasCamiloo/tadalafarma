@@ -24,6 +24,8 @@ public class BackofficeController {
     private Usuario verificarSessao(HttpSession session) {
         return (Usuario) session.getAttribute("usuarioLogado");
     }
+
+
     
     // Tela principal do backoffice
     @GetMapping("/backoffice")

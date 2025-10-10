@@ -2,53 +2,54 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backoffice - Tadalafarma</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header { background-color: #f0f0f0; padding: 15px; margin-bottom: 20px; }
-        .user-info { background-color: #e7f3ff; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .menu-section { margin-bottom: 20px; }
-        .menu-section h3 { color: #333; margin-bottom: 10px; }
-        .menu-button { display: inline-block; background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; margin-right: 10px; margin-bottom: 10px; }
-        .menu-button:hover { background-color: #45a049; }
-        .logout-link { color: #f44336; text-decoration: none; }
-        .logout-link:hover { text-decoration: underline; }
-        .message { padding: 10px; margin-bottom: 20px; border-radius: 4px; }
-        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Tela Principal do Backoffice</h1>
-        <a href="/logout" class="logout-link">Logout</a>
-    </div>
-    
-    <div class="user-info">
-        <p><strong>Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-        <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
-    </div>
-    
-    <div th:if="${param.erro}" class="message error">
-        <span th:text="${param.erro}"></span>
-    </div>
-    <div th:if="${param.info}" class="message info">
-        <span th:text="${param.info}"></span>
-    </div>
-    
-    <div class="menu-section">
-        <h3>Produtos</h3>
-        <a href="/produtos" class="menu-button">Listar Produtos</a>
-    </div>
-    
-    <div th:if="${isAdmin}" class="menu-section">
-        <h3>Usuários</h3>
-        <a href="/usuarios" class="menu-button">Listar Usuários</a>
-    </div>
-    
-    <div th:if="${!isAdmin}" class="menu-section">
-        <p>Acesso restrito. Apenas administradores podem gerenciar usuários.</p>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>💊 Backoffice Tadalafarma</h1>
+                <p class="subtitle">Sistema de Gestão</p>
+            </div>
+            <a href="/logout" class="logout-link">🚪 Sair</a>
+        </div>
+        
+        <div class="user-info">
+            <p><strong>👤 Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
+            <p><strong>📧 Email:</strong> <span th:text="${usuario.email}"></span></p>
+            <p><strong>🔑 Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+        </div>
+        
+        <div th:if="${param.erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${param.erro}"></span>
+        </div>
+        <div th:if="${param.info}" class="message info">
+            <strong>ℹ️ Informação:</strong> <span th:text="${param.info}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="menu-section">
+                <h3>📦 Gestão de Produtos</h3>
+                <div class="menu-buttons">
+                    <a href="/produtos" class="menu-button">📋 Listar Produtos</a>
+                </div>
+            </div>
+            
+            <div th:if="${isAdmin}" class="menu-section">
+                <h3>👥 Gestão de Usuários</h3>
+                <div class="menu-buttons">
+                    <a href="/usuarios" class="menu-button">📋 Listar Usuários</a>
+                </div>
+            </div>
+            
+            <div th:if="${!isAdmin}" class="menu-section">
+                <div class="message warning">
+                    <strong>⚠️ Acesso Restrito:</strong> Apenas administradores podem gerenciar usuários.
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

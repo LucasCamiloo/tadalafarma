@@ -37,3 +37,6 @@ public interface ProdutoRepository extends MongoRepository<Produto, String> {
     @Query(value = "{}", sort = "{ 'sequencialId': -1 }")
     List<Produto> findTop1ByOrderBySequencialIdDesc();
 }
+
+
+

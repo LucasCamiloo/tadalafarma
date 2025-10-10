@@ -2,27 +2,54 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backoffice - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <a th:href="@{/logout}">Logout</a>
-    
-    <h1>Tela Principal do Backoffice</h1>
-    
-    <p><strong>Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-    <p><strong>Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
-    
-    <div th:if="${param.erro}" th:text="${param.erro}"></div>
-    <div th:if="${param.info}" th:text="${param.info}"></div>
-    
-    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ADMINISTRADOR}">
-        <p><strong>Listar usuários</strong></p>
-        <a href="/usuarios">Acessar Lista de Usuários</a>
-    </div>
-    
-    <div th:if="${usuario.grupo == T(com.tadalafarma.Tadalafarma.model.Usuario$Grupo).ESTOQUISTA}">
-        <p>Acesso restrito. Apenas administradores podem listar usuários.</p>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>💊 Backoffice Tadalafarma</h1>
+                <p class="subtitle">Sistema de Gestão</p>
+            </div>
+            <a href="/logout" class="logout-link">🚪 Sair</a>
+        </div>
+        
+        <div class="user-info">
+            <p><strong>👤 Usuário logado:</strong> <span th:text="${usuario.nome}"></span></p>
+            <p><strong>📧 Email:</strong> <span th:text="${usuario.email}"></span></p>
+            <p><strong>🔑 Grupo:</strong> <span th:text="${usuario.grupo}"></span></p>
+        </div>
+        
+        <div th:if="${param.erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${param.erro}"></span>
+        </div>
+        <div th:if="${param.info}" class="message info">
+            <strong>ℹ️ Informação:</strong> <span th:text="${param.info}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="menu-section">
+                <h3>📦 Gestão de Produtos</h3>
+                <div class="menu-buttons">
+                    <a href="/produtos" class="menu-button">📋 Listar Produtos</a>
+                </div>
+            </div>
+            
+            <div th:if="${isAdmin}" class="menu-section">
+                <h3>👥 Gestão de Usuários</h3>
+                <div class="menu-buttons">
+                    <a href="/usuarios" class="menu-button">📋 Listar Usuários</a>
+                </div>
+            </div>
+            
+            <div th:if="${!isAdmin}" class="menu-section">
+                <div class="message warning">
+                    <strong>⚠️ Acesso Restrito:</strong> Apenas administradores podem gerenciar usuários.
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
