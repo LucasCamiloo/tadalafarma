@@ -276,8 +276,18 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 69, 69, 0.15);
 }
 
-.form-group input:disabled {
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
     background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.form-group input:read-only,
+.form-group textarea:read-only {
+    background: #f8f9fa;
+    border-color: #d1d5db;
+    color: #6b7280;
     cursor: not-allowed;
 }
 

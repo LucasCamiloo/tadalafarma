@@ -269,6 +269,40 @@ public class ProdutoService {
         }
     }
     
+    // Definir imagem como principal
+    public String definirImagemPrincipal(Long produtoSequencialId, String imagemId) {
+        try {
+            // Verificar se a imagem existe
+            Optional<ProdutoImagem> imagemOpt = produtoImagemRepository.findById(imagemId);
+            if (!imagemOpt.isPresent()) {
+                return "Imagem não encontrada";
+            }
+            
+            ProdutoImagem imagemSelecionada = imagemOpt.get();
+            
+            // Verificar se a imagem pertence ao produto
+            if (!imagemSelecionada.getProdutoSequencialId().equals(produtoSequencialId)) {
+                return "Esta imagem não pertence a este produto";
+            }
+            
+            // Remover flag de principal de todas as imagens do produto
+            List<ProdutoImagem> imagensExistentes = produtoImagemRepository.findByProdutoSequencialId(produtoSequencialId);
+            for (ProdutoImagem img : imagensExistentes) {
+                img.setImagemPrincipal(false);
+                produtoImagemRepository.save(img);
+            }
+            
+            // Definir a imagem selecionada como principal
+            imagemSelecionada.setImagemPrincipal(true);
+            produtoImagemRepository.save(imagemSelecionada);
+            
+            return "Imagem definida como principal com sucesso";
+            
+        } catch (Exception e) {
+            return "Erro ao definir imagem como principal: " + e.getMessage();
+        }
+    }
+    
     // Gerar próximo ID sequencial
     private Long gerarProximoSequencialId() {
         List<Produto> ultimoProduto = produtoRepository.findTop1ByOrderBySequencialIdDesc();
@@ -279,6 +313,7 @@ public class ProdutoService {
         }
     }
 }
+
 
 
 
