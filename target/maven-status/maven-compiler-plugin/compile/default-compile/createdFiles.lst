@@ -6,7 +6,9 @@ com\tadalafarma\Tadalafarma\TadalafarmaApplication.class
 com\tadalafarma\Tadalafarma\controller\LoginController.class
 com\tadalafarma\Tadalafarma\repository\UsuarioRepository.class
 com\tadalafarma\Tadalafarma\service\UsuarioService.class
+com\tadalafarma\Tadalafarma\controller\LojaController.class
 com\tadalafarma\Tadalafarma\config\SecurityConfig.class
+com\tadalafarma\Tadalafarma\controller\LojaController$ItemCarrinho.class
 com\tadalafarma\Tadalafarma\repository\ProdutoRepository.class
 com\tadalafarma\Tadalafarma\model\Produto.class
 com\tadalafarma\Tadalafarma\repository\ProdutoImagemRepository.class

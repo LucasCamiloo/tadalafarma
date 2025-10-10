@@ -16,8 +16,16 @@
             <a href="/produtos">← Voltar à Lista</a>
         </div>
 
+        <div th:if="${param.sucesso}" class="message success">
+            <strong>✓ Sucesso:</strong> <span th:text="${param.sucesso[0]}"></span>
+        </div>
+
         <div th:if="${erro}" class="message error">
             <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div th:if="${param.erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${param.erro[0]}"></span>
         </div>
 
         <div th:if="${isEstoquista}" class="role-info">
@@ -74,12 +82,25 @@
                         <div th:if="${!imagens.empty}" style="margin-bottom: 30px;">
                             <h4 style="margin-bottom: 15px; color: var(--text-primary);">Imagens Atuais</h4>
                             <div class="current-images">
-                                <div th:each="imagem : ${imagens}" class="image-item">
-                                    <img th:src="${imagem.caminhoArquivo}" th:alt="${imagem.nomeArquivoOriginal}">
-                                    <div th:if="${imagem.imagemPrincipal}" style="color: #10b981; font-weight: 600; margin-top: 8px;">✓ Principal</div>
+                                <div th:each="imagem : ${imagens}" class="image-item" style="position: relative;">
+                                    <img th:src="${imagem.caminhoArquivo}" 
+                                         th:alt="${imagem.nomeArquivoOriginal}"
+                                         th:class="${imagem.imagemPrincipal} ? 'imagem-principal' : ''">
+                                    <div th:if="${imagem.imagemPrincipal}" style="color: var(--primary-color); font-weight: 700; margin-top: 8px; font-size: 14px;">
+                                        ⭐ FOTO PRINCIPAL
+                                    </div>
+                                    <div th:unless="${imagem.imagemPrincipal}" style="margin-top: 8px;">
+                                        <form th:action="@{/produtos/{produtoId}/imagem/{imagemId}/principal(produtoId=${produto.sequencialId},imagemId=${imagem.id})}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn-set-principal" 
+                                                    onclick="return confirm('Deseja definir esta imagem como principal?')">
+                                                ⭐ Definir como Principal
+                                            </button>
+                                        </form>
+                                    </div>
                                     <div style="margin-top: 8px;">
                                         <input type="checkbox" name="imagensParaDeletar" th:value="${imagem.id}" th:id="'img-' + ${imagem.id}">
-                                        <label th:for="'img-' + ${imagem.id}" style="font-weight: normal; cursor: pointer;">Deletar</label>
+                                        <label th:for="'img-' + ${imagem.id}" style="font-weight: normal; cursor: pointer; color: var(--text-secondary);">🗑️ Deletar</label>
                                     </div>
                                 </div>
                             </div>
