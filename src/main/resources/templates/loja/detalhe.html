@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${produto.nome} + ' - Tadala Farma'">Produto - Tadala Farma</title>
+    <link rel="stylesheet" th:href="@{/css/loja.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a th:href="@{/loja}">
+                        <img th:src="@{/images/logo.png}" alt="Logo Tadala Farma">
+                    </a>
+                </div>
+                <div class="header-right">
+                    <a href="#" class="login-link">Faça login / Crie seu login</a>
+                    <a th:href="@{/loja/carrinho}" class="cart-icon">
+                        🛒
+                        <span class="cart-count" th:if="${totalItensCarrinho > 0}" th:text="${totalItensCarrinho}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="breadcrumb">
+                <a th:href="@{/loja}">Início</a> / <span th:text="${produto.nome}">Produto</span>
+            </div>
+
+            <div class="produto-detalhes">
+                <div class="produto-imagens">
+                    <div class="carousel">
+                        <div class="carousel-container" th:if="${not #lists.isEmpty(imagens)}">
+                            <button class="carousel-btn prev" onclick="moveCarousel(-1)">❮</button>
+                            <div class="carousel-slides">
+                                <img th:each="imagem, iterStat : ${imagens}" 
+                                     th:src="${imagem.caminhoArquivo}" 
+                                     th:alt="${produto.nome}"
+                                     th:class="${iterStat.index == 0} ? 'carousel-slide active' : 'carousel-slide'"
+                                     onerror="this.src='https://via.placeholder.com/600x600?text=Sem+Imagem'">
+                            </div>
+                            <button class="carousel-btn next" onclick="moveCarousel(1)">❯</button>
+                        </div>
+                        <div th:if="${#lists.isEmpty(imagens)}" class="no-images">
+                            <img src="https://via.placeholder.com/600x600?text=Sem+Imagens" alt="Sem imagens">
+                        </div>
+                        
+                        <div class="carousel-indicators" th:if="${not #lists.isEmpty(imagens)}">
+                            <span th:each="imagem, iterStat : ${imagens}" 
+                                  th:class="${iterStat.index == 0} ? 'indicator active' : 'indicator'"
+                                  th:onclick="'goToSlide(' + ${iterStat.index} + ')'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="produto-info-detalhada">
+                    <h1 class="produto-nome-grande" th:text="${produto.nome}">Nome do Produto</h1>
+                    
+                    <div class="produto-avaliacao">
+                        <span class="estrelas" th:attr="data-avaliacao=${produto.avaliacao}">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                  th:class="${i <= produto.avaliacao.intValue()} ? 'star filled' : 'star'">★</span>
+                        </span>
+                        <span class="avaliacao-numero" th:text="${#numbers.formatDecimal(produto.avaliacao, 1, 'POINT', 1, 'COMMA')}">0.0</span>
+                    </div>
+
+                    <div class="produto-preco-grande">
+                        <span class="preco-valor" th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                    </div>
+
+                    <div class="produto-descricao">
+                        <h3>Descrição</h3>
+                        <p th:text="${produto.descricaoDetalhada}">Descrição detalhada do produto</p>
+                    </div>
+
+                    <div class="produto-estoque" th:if="${produto.quantidadeEstoque > 0}">
+                        <p class="estoque-disponivel">✓ Em estoque</p>
+                    </div>
+                    <div class="produto-estoque" th:if="${produto.quantidadeEstoque == 0}">
+                        <p class="estoque-indisponivel">✗ Produto indisponível</p>
+                    </div>
+
+                    <div class="produto-acoes">
+                        <form th:action="@{/loja/carrinho/adicionar}" method="post">
+                            <input type="hidden" name="produtoId" th:value="${produto.sequencialId}">
+                            <button type="submit" name="acao" value="carrinho" class="btn-comprar" 
+                                    th:disabled="${produto.quantidadeEstoque == 0}">
+                                🛒 Comprar
+                            </button>
+                            <button type="submit" name="acao" value="continuar" class="btn-continuar"
+                                    th:disabled="${produto.quantidadeEstoque == 0}">
+                                Adicionar e Continuar Comprando
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Tadala Farma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.indicator');
+
+        function showSlide(index) {
+            if (slides.length === 0) return;
+            
+            if (index >= slides.length) {
+                currentSlide = 0;
+            } else if (index < 0) {
+                currentSlide = slides.length - 1;
+            } else {
+                currentSlide = index;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+
+            slides[currentSlide].classList.add('active');
+            if (indicators[currentSlide]) {
+                indicators[currentSlide].classList.add('active');
+            }
+        }
+
+        function moveCarousel(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+        }
+
+        // Auto-play (opcional)
+        // setInterval(() => moveCarousel(1), 5000);
+    </script>
+</body>
+</html>
+

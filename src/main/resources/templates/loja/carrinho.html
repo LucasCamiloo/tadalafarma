@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - Tadala Farma</title>
+    <link rel="stylesheet" th:href="@{/css/loja.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a th:href="@{/loja}">
+                        <img th:src="@{/images/logo.png}" alt="Logo Tadala Farma">
+                    </a>
+                </div>
+                <div class="header-right">
+                    <a href="#" class="login-link">Faça login / Crie seu login</a>
+                    <a th:href="@{/loja/carrinho}" class="cart-icon active">
+                        🛒
+                        <span class="cart-count" th:if="${totalItensCarrinho > 0}" th:text="${totalItensCarrinho}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Meu Carrinho</h1>
+
+            <div class="carrinho-container" th:if="${not #lists.isEmpty(itensCarrinho)}">
+                <div class="carrinho-itens">
+                    <div class="carrinho-item" th:each="item : ${itensCarrinho}">
+                        <div class="item-imagem">
+                            <img th:src="${item.imagemUrl}" th:alt="${item.produto.nome}" 
+                                 onerror="this.src='https://via.placeholder.com/100x100?text=Sem+Imagem'">
+                        </div>
+                        <div class="item-info">
+                            <h3 class="item-nome" th:text="${item.produto.nome}">Nome do Produto</h3>
+                            <p class="item-preco-unitario" 
+                               th:text="'R$ ' + ${#numbers.formatDecimal(item.produto.preco, 1, 'POINT', 2, 'COMMA')}">
+                               R$ 0,00
+                            </p>
+                        </div>
+                        <div class="item-quantidade">
+                            <form th:action="@{/loja/carrinho/diminuir/{id}(id=${item.produto.sequencialId})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn-quantidade">-</button>
+                            </form>
+                            <span class="quantidade-valor" th:text="${item.quantidade}">1</span>
+                            <form th:action="@{/loja/carrinho/aumentar/{id}(id=${item.produto.sequencialId})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn-quantidade">+</button>
+                            </form>
+                        </div>
+                        <div class="item-total">
+                            <p class="item-preco-total" 
+                               th:text="'R$ ' + ${#numbers.formatDecimal(item.total, 1, 'POINT', 2, 'COMMA')}">
+                               R$ 0,00
+                            </p>
+                        </div>
+                        <div class="item-remover">
+                            <form th:action="@{/loja/carrinho/remover/{id}(id=${item.produto.sequencialId})}" 
+                                  method="post">
+                                <button type="submit" class="btn-remover">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carrinho-resumo">
+                    <h2>Resumo do Pedido</h2>
+                    
+                    <div class="resumo-linha">
+                        <span>Subtotal:</span>
+                        <span th:text="'R$ ' + ${#numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                    </div>
+
+                    <div class="frete-section">
+                        <h3>Calcular Frete</h3>
+                        <form th:action="@{/loja/carrinho/calcular-frete}" method="post" class="frete-form">
+                            <div class="form-group">
+                                <label for="cep">CEP:</label>
+                                <input type="text" id="cep" name="cep" placeholder="00000-000" 
+                                       maxlength="9" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Escolha o tipo de frete:</label>
+                                <div class="frete-opcoes">
+                                    <label class="frete-opcao">
+                                        <input type="radio" name="valorFrete" 
+                                               th:value="${opcoesFreteValores[0]}" 
+                                               th:checked="${freteAtual == opcoesFreteValores[0]}" required>
+                                        <div class="frete-info">
+                                            <span th:text="${opcoesFreteNomes[0]}">Econômico</span>
+                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[0], 1, 'POINT', 2, 'COMMA')}">
+                                                R$ 10,00
+                                            </strong>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="frete-opcao">
+                                        <input type="radio" name="valorFrete" 
+                                               th:value="${opcoesFreteValores[1]}"
+                                               th:checked="${freteAtual == opcoesFreteValores[1]}">
+                                        <div class="frete-info">
+                                            <span th:text="${opcoesFreteNomes[1]}">Normal</span>
+                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[1], 1, 'POINT', 2, 'COMMA')}">
+                                                R$ 20,00
+                                            </strong>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="frete-opcao">
+                                        <input type="radio" name="valorFrete" 
+                                               th:value="${opcoesFreteValores[2]}"
+                                               th:checked="${freteAtual == opcoesFreteValores[2]}">
+                                        <div class="frete-info">
+                                            <span th:text="${opcoesFreteNomes[2]}">Expresso</span>
+                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[2], 1, 'POINT', 2, 'COMMA')}">
+                                                R$ 30,00
+                                            </strong>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-calcular-frete">Atualizar Frete</button>
+                        </form>
+                    </div>
+
+                    <div class="resumo-linha">
+                        <span>Frete:</span>
+                        <span th:text="'R$ ' + ${#numbers.formatDecimal(freteAtual, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                    </div>
+
+                    <div class="resumo-linha total">
+                        <span>Total:</span>
+                        <span th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                    </div>
+
+                    <button class="btn-finalizar">Finalizar Compra</button>
+                    <a th:href="@{/loja}" class="btn-continuar-comprando">Continuar Comprando</a>
+                </div>
+            </div>
+
+            <div class="carrinho-vazio" th:if="${#lists.isEmpty(itensCarrinho)}">
+                <p>Seu carrinho está vazio.</p>
+                <a th:href="@{/loja}" class="btn-voltar-loja">Voltar para a Loja</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Tadala Farma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Máscara de CEP
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
+

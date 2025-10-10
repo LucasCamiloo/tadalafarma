@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tadala Farma - Loja Online</title>
+    <link rel="stylesheet" th:href="@{/css/loja.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img th:src="@{/images/logo.png}" alt="Logo Tadala Farma">
+                </div>
+                <div class="header-right">
+                    <a href="#" class="login-link">Faça login / Crie seu login</a>
+                    <a th:href="@{/loja/carrinho}" class="cart-icon">
+                        🛒
+                        <span class="cart-count" th:if="${totalItensCarrinho > 0}" th:text="${totalItensCarrinho}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Nossos Produtos</h1>
+            
+            <div class="produtos-grid">
+                <div class="produto-card" th:each="produto : ${produtos}">
+                    <div class="produto-imagem">
+                        <img th:src="${imagensPrincipais.get(produto.sequencialId)}" 
+                             th:alt="${produto.nome}"
+                             onerror="this.src='https://via.placeholder.com/300x300?text=Sem+Imagem'">
+                    </div>
+                    <div class="produto-info">
+                        <h3 class="produto-nome" th:text="${produto.nome}">Nome do Produto</h3>
+                        <p class="produto-preco" th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</p>
+                        <a th:href="@{/loja/produto/{id}(id=${produto.sequencialId})}" class="btn-detalhe">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(produtos)}" class="empty-message">
+                <p>Nenhum produto disponível no momento.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Tadala Farma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
