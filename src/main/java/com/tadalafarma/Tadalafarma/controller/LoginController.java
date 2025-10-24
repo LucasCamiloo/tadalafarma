@@ -19,15 +19,15 @@ public class LoginController {
     
     @GetMapping("/")
     public String index() {
-        return "redirect:/login";
+        return "redirect:/loja";
     }
     
-    @GetMapping("/login")
+    @GetMapping("/backoffice/login")
     public String login(Model model) {
         return "login";
     }
     
-    @PostMapping("/login")
+    @PostMapping("/backoffice/login")
     public String processarLogin(@RequestParam String email, @RequestParam String senha, 
                                HttpSession session, Model model) {
         
@@ -45,9 +45,9 @@ public class LoginController {
         }
     }
     
-    @GetMapping("/logout")
+    @GetMapping("/backoffice/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/login";
+        return "redirect:/backoffice/login";
     }
 }

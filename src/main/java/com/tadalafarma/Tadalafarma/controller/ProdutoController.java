@@ -143,10 +143,10 @@ public class ProdutoController {
     // Alterar produto (POST)
     @PostMapping("/produtos/{id}/alterar")
     public String processarAlteracao(@PathVariable("id") Long id,
-                                   @RequestParam String nome,
-                                   @RequestParam BigDecimal avaliacao,
-                                   @RequestParam String descricaoDetalhada,
-                                   @RequestParam BigDecimal preco,
+                                   @RequestParam(required = false) String nome,
+                                   @RequestParam(required = false) BigDecimal avaliacao,
+                                   @RequestParam(required = false) String descricaoDetalhada,
+                                   @RequestParam(required = false) BigDecimal preco,
                                    @RequestParam Integer quantidadeEstoque,
                                    @RequestParam(required = false) List<MultipartFile> novasImagens,
                                    @RequestParam(required = false) List<Boolean> novaImagemPrincipal,
@@ -164,8 +164,20 @@ public class ProdutoController {
             // Administrador pode alterar tudo
             resultado = produtoService.alterarProduto(id, nome, avaliacao, descricaoDetalhada, preco, quantidadeEstoque);
         } else if (usuario.getGrupo() == Usuario.Grupo.ESTOQUISTA) {
-            // Estoquista só pode alterar quantidade
-            resultado = produtoService.alterarQuantidadeEstoque(id, quantidadeEstoque);
+            // Estoquista só pode alterar quantidade - buscar valores atuais para os outros campos
+            Optional<Produto> produtoOpt = produtoService.buscarPorSequencialId(id);
+            if (!produtoOpt.isPresent()) {
+                return "redirect:/produtos?erro=Produto não encontrado";
+            }
+            
+            Produto produtoAtual = produtoOpt.get();
+            // Usar valores atuais para campos que estoquista não pode alterar
+            String nomeAtual = (nome != null && !nome.trim().isEmpty()) ? nome : produtoAtual.getNome();
+            BigDecimal avaliacaoAtual = (avaliacao != null) ? avaliacao : produtoAtual.getAvaliacao();
+            String descricaoAtual = (descricaoDetalhada != null && !descricaoDetalhada.trim().isEmpty()) ? descricaoDetalhada : produtoAtual.getDescricaoDetalhada();
+            BigDecimal precoAtual = (preco != null) ? preco : produtoAtual.getPreco();
+            
+            resultado = produtoService.alterarProduto(id, nomeAtual, avaliacaoAtual, descricaoAtual, precoAtual, quantidadeEstoque);
         } else {
             return "redirect:/produtos?erro=Acesso negado";
         }
@@ -209,6 +221,10 @@ public class ProdutoController {
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
             return "redirect:/login";
+        }
+        
+        if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
+            return "redirect:/produtos?erro=Acesso negado. Apenas administradores podem visualizar produtos";
         }
         
         Optional<Produto> produtoOpt = produtoService.buscarPorSequencialId(id);
@@ -256,7 +272,26 @@ public class ProdutoController {
         String resultado = produtoService.deletarImagem(imagemId);
         return "redirect:/produtos?sucesso=" + resultado;
     }
+    
+    // Definir imagem como principal
+    @PostMapping("/produtos/{produtoId}/imagem/{imagemId}/principal")
+    public String definirImagemPrincipal(@PathVariable("produtoId") Long produtoId, 
+                                        @PathVariable("imagemId") String imagemId,
+                                        HttpSession session) {
+        Usuario usuario = verificarSessao(session);
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        
+        if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
+            return "redirect:/produtos/{produtoId}/alterar?erro=Acesso negado";
+        }
+        
+        String resultado = produtoService.definirImagemPrincipal(produtoId, imagemId);
+        return "redirect:/produtos/" + produtoId + "/alterar?sucesso=" + resultado;
+    }
 }
+
 
 
 
