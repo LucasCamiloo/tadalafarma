@@ -25,14 +25,13 @@ public class BackofficeController {
         return (Usuario) session.getAttribute("usuarioLogado");
     }
 
-
     
     // Tela principal do backoffice
     @GetMapping("/backoffice")
     public String backoffice(HttpSession session, Model model) {
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
-            return "redirect:/login";
+            return "redirect:/backoffice/login";
         }
         
         model.addAttribute("usuario", usuario);
@@ -47,7 +46,7 @@ public class BackofficeController {
     public String listarUsuarios(HttpSession session, Model model) {
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
-            return "redirect:/login";
+            return "redirect:/backoffice/login";
         }
         
         if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
@@ -65,7 +64,7 @@ public class BackofficeController {
     public String processarAcaoUsuario(@RequestParam String acao, HttpSession session) {
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
-            return "redirect:/login";
+            return "redirect:/backoffice/login";
         }
         
         if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
@@ -91,7 +90,7 @@ public class BackofficeController {
     public String cadastrarUsuario(HttpSession session, Model model) {
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
-            return "redirect:/login";
+            return "redirect:/backoffice/login";
         }
         
         if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
@@ -109,7 +108,7 @@ public class BackofficeController {
         
         Usuario usuario = verificarSessao(session);
         if (usuario == null) {
-            return "redirect:/login";
+            return "redirect:/backoffice/login";
         }
         
         if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {

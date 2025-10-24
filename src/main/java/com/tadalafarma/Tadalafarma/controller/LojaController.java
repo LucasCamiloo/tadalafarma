@@ -29,7 +29,7 @@ public class LojaController {
 
     // Landing page - lista de produtos
     @GetMapping
-    public String index(HttpSession session, Model model) {
+    public String index(HttpSession session, Model model, @RequestParam(required = false) String mensagem) {
         List<Produto> produtos = produtoRepository.findByStatus(true);
         
         // Buscar imagem principal de cada produto
@@ -54,9 +54,14 @@ public class LojaController {
             imagensPrincipais.put(produto.getSequencialId(), imagemUrl);
         }
         
+        // Verificar se cliente está logado
+        Object clienteLogado = session.getAttribute("clienteLogado");
+        
         model.addAttribute("produtos", produtos);
         model.addAttribute("imagensPrincipais", imagensPrincipais);
         model.addAttribute("totalItensCarrinho", getTotalItensCarrinho(session));
+        model.addAttribute("clienteLogado", clienteLogado);
+        model.addAttribute("mensagem", mensagem);
         
         return "loja/index";
     }
@@ -133,24 +138,17 @@ public class LojaController {
             }
         }
         
-        // Opções de frete
-        BigDecimal[] opcoesFreteValores = {
-            new BigDecimal("10.00"),
-            new BigDecimal("20.00"),
-            new BigDecimal("30.00")
-        };
+        // Calcular frete automaticamente baseado no endereço padrão do cliente
+        BigDecimal freteAtual = calcularFreteAutomatico(session);
+        
+        // Opções de frete baseadas na região do CEP
+        BigDecimal[] opcoesFreteValores = calcularOpcoesFrete(session);
         
         String[] opcoesFreteNomes = {
             "Frete Econômico (15-20 dias)",
             "Frete Normal (7-10 dias)",
             "Frete Expresso (2-3 dias)"
         };
-        
-        BigDecimal freteAtual = (BigDecimal) session.getAttribute("freteEscolhido");
-        if (freteAtual == null) {
-            freteAtual = opcoesFreteValores[0];
-            session.setAttribute("freteEscolhido", freteAtual);
-        }
         
         BigDecimal total = subtotal.add(freteAtual);
         
@@ -161,6 +159,10 @@ public class LojaController {
         model.addAttribute("opcoesFreteValores", opcoesFreteValores);
         model.addAttribute("opcoesFreteNomes", opcoesFreteNomes);
         model.addAttribute("totalItensCarrinho", getTotalItensCarrinho(session));
+        
+        // Verificar se cliente está logado
+        Object clienteLogado = session.getAttribute("clienteLogado");
+        model.addAttribute("clienteLogado", clienteLogado);
         
         return "loja/carrinho";
     }
@@ -196,13 +198,10 @@ public class LojaController {
         session.setAttribute("carrinho", carrinho);
         return "redirect:/loja/carrinho";
     }
-
-    // Calcular frete
-    @PostMapping("/carrinho/calcular-frete")
-    public String calcularFrete(@RequestParam String cep, 
-                                @RequestParam BigDecimal valorFrete, 
-                                HttpSession session) {
-        session.setAttribute("cep", cep);
+    
+    // Atualizar frete escolhido
+    @PostMapping("/carrinho/atualizar-frete")
+    public String atualizarFrete(@RequestParam BigDecimal valorFrete, HttpSession session) {
         session.setAttribute("freteEscolhido", valorFrete);
         return "redirect:/loja/carrinho";
     }
@@ -222,7 +221,114 @@ public class LojaController {
         Map<Long, Integer> carrinho = getCarrinho(session);
         return carrinho.values().stream().mapToInt(Integer::intValue).sum();
     }
-
+    
+    // Método para calcular frete automaticamente baseado no endereço padrão do cliente
+    private BigDecimal calcularFreteAutomatico(HttpSession session) {
+        // Verificar se já há um frete escolhido na sessão
+        BigDecimal freteEscolhido = (BigDecimal) session.getAttribute("freteEscolhido");
+        if (freteEscolhido != null) {
+            return freteEscolhido;
+        }
+        
+        Object clienteLogado = session.getAttribute("clienteLogado");
+        
+        if (clienteLogado != null && clienteLogado instanceof com.tadalafarma.Tadalafarma.model.Cliente) {
+            com.tadalafarma.Tadalafarma.model.Cliente cliente = (com.tadalafarma.Tadalafarma.model.Cliente) clienteLogado;
+            
+            // Buscar o endereço padrão
+            if (cliente.getEnderecosEntrega() != null && !cliente.getEnderecosEntrega().isEmpty()) {
+                com.tadalafarma.Tadalafarma.model.Endereco enderecoPadrao = cliente.getEnderecosEntrega().stream()
+                    .filter(endereco -> endereco.getPadrao() != null && endereco.getPadrao())
+                    .findFirst()
+                    .orElse(null);
+                
+                if (enderecoPadrao != null) {
+                    // Usar frete econômico como padrão
+                    BigDecimal[] opcoes = calcularOpcoesFretePorCEP(enderecoPadrao.getCep());
+                    BigDecimal fretePadrao = opcoes[0]; // Econômico
+                    
+                    session.setAttribute("freteEscolhido", fretePadrao);
+                    session.setAttribute("cepFreteAtual", enderecoPadrao.getCep());
+                    
+                    System.out.println("Frete padrão (Econômico) definido para CEP " + enderecoPadrao.getCep() + 
+                                     ": R$ " + fretePadrao);
+                    
+                    return fretePadrao;
+                }
+            }
+        }
+        
+        // Se não há cliente logado ou endereço padrão, usar frete padrão
+        BigDecimal fretePadrao = new BigDecimal("25.00");
+        session.setAttribute("freteEscolhido", fretePadrao);
+        return fretePadrao;
+    }
+    
+    // Método para calcular opções de frete baseadas na região do CEP
+    private BigDecimal[] calcularOpcoesFrete(HttpSession session) {
+        Object clienteLogado = session.getAttribute("clienteLogado");
+        
+        if (clienteLogado != null && clienteLogado instanceof com.tadalafarma.Tadalafarma.model.Cliente) {
+            com.tadalafarma.Tadalafarma.model.Cliente cliente = (com.tadalafarma.Tadalafarma.model.Cliente) clienteLogado;
+            
+            // Buscar o endereço padrão
+            if (cliente.getEnderecosEntrega() != null && !cliente.getEnderecosEntrega().isEmpty()) {
+                com.tadalafarma.Tadalafarma.model.Endereco enderecoPadrao = cliente.getEnderecosEntrega().stream()
+                    .filter(endereco -> endereco.getPadrao() != null && endereco.getPadrao())
+                    .findFirst()
+                    .orElse(null);
+                
+                if (enderecoPadrao != null) {
+                    return calcularOpcoesFretePorCEP(enderecoPadrao.getCep());
+                }
+            }
+        }
+        
+        // Opções padrão para clientes não logados
+        return new BigDecimal[]{
+            new BigDecimal("25.00"), // Econômico
+            new BigDecimal("35.00"), // Normal
+            new BigDecimal("45.00")  // Expresso
+        };
+    }
+    
+    // Método para calcular opções de frete baseadas no CEP
+    private BigDecimal[] calcularOpcoesFretePorCEP(String cep) {
+        // Remove caracteres não numéricos
+        String cepLimpo = cep.replaceAll("\\D", "");
+        
+        // Simulação de cálculo de frete baseado na região do CEP
+        // CEPs que começam com 01-09 (São Paulo) - frete mais barato
+        if (cepLimpo.startsWith("01") || cepLimpo.startsWith("02") || cepLimpo.startsWith("03") ||
+            cepLimpo.startsWith("04") || cepLimpo.startsWith("05") || cepLimpo.startsWith("06") ||
+            cepLimpo.startsWith("07") || cepLimpo.startsWith("08") || cepLimpo.startsWith("09")) {
+            return new BigDecimal[]{
+                new BigDecimal("15.00"), // Econômico para SP
+                new BigDecimal("25.00"), // Normal para SP
+                new BigDecimal("35.00")  // Expresso para SP
+            };
+        }
+        // CEPs que começam com 20-29 (Rio de Janeiro) - frete médio
+        else if (cepLimpo.startsWith("20") || cepLimpo.startsWith("21") || cepLimpo.startsWith("22") ||
+                 cepLimpo.startsWith("23") || cepLimpo.startsWith("24") || cepLimpo.startsWith("25") ||
+                 cepLimpo.startsWith("26") || cepLimpo.startsWith("27") || cepLimpo.startsWith("28") ||
+                 cepLimpo.startsWith("29")) {
+            return new BigDecimal[]{
+                new BigDecimal("20.00"), // Econômico para RJ
+                new BigDecimal("30.00"), // Normal para RJ
+                new BigDecimal("40.00")  // Expresso para RJ
+            };
+        }
+        // Outras regiões - frete mais caro
+        else {
+            return new BigDecimal[]{
+                new BigDecimal("25.00"), // Econômico para outras regiões
+                new BigDecimal("35.00"), // Normal para outras regiões
+                new BigDecimal("45.00")  // Expresso para outras regiões
+            };
+        }
+    }
+    
     // Classe interna para representar item do carrinho
     public static class ItemCarrinho {
         private Produto produto;

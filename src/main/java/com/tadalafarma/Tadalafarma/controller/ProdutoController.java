@@ -223,6 +223,10 @@ public class ProdutoController {
             return "redirect:/login";
         }
         
+        if (usuario.getGrupo() != Usuario.Grupo.ADMINISTRADOR) {
+            return "redirect:/produtos?erro=Acesso negado. Apenas administradores podem visualizar produtos";
+        }
+        
         Optional<Produto> produtoOpt = produtoService.buscarPorSequencialId(id);
         if (!produtoOpt.isPresent()) {
             return "redirect:/produtos?erro=Produto não encontrado";
