@@ -26,6 +26,9 @@ public interface ProdutoRepository extends MongoRepository<Produto, String> {
     // Buscar produtos por status
     Page<Produto> findByStatusOrderByDataCriacaoDesc(Boolean status, Pageable pageable);
     
+    // Buscar produtos por status (sem paginação)
+    List<Produto> findByStatus(Boolean status);
+    
     // Buscar produtos por nome e status
     @Query("{ 'nome': { $regex: ?0, $options: 'i' }, 'status': ?1 }")
     Page<Produto> findByNomeContainingIgnoreCaseAndStatus(String nome, Boolean status, Pageable pageable);
@@ -37,6 +40,7 @@ public interface ProdutoRepository extends MongoRepository<Produto, String> {
     @Query(value = "{}", sort = "{ 'sequencialId': -1 }")
     List<Produto> findTop1ByOrderBySequencialIdDesc();
 }
+
 
 
 
