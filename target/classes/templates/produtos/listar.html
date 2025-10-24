@@ -56,7 +56,9 @@
                     <td th:text="${produto.statusTexto}"></td>
                     <td class="actions">
                         <a th:href="@{/produtos/{id}/alterar(id=${produto.sequencialId})}" class="action-btn edit-btn">✏️ Alterar</a>
-                        <a th:href="@{/produtos/{id}/visualizar(id=${produto.sequencialId})}" class="action-btn view-btn">👁️ Ver</a>
+                        <span th:if="${isAdmin}">
+                            <a th:href="@{/produtos/{id}/visualizar(id=${produto.sequencialId})}" class="action-btn view-btn">👁️ Ver</a>
+                        </span>
                         <span th:if="${isAdmin}">
                             <form th:action="@{/produtos/{id}/status(id=${produto.sequencialId})}" method="post" style="display: inline;">
                                 <button type="submit" 

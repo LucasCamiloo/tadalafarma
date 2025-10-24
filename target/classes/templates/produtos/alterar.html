@@ -35,15 +35,21 @@
         <div class="content-wrapper">
             <div class="form-container">
                 <form method="post" th:action="@{/produtos/{id}/alterar(id=${produto.sequencialId})}" enctype="multipart/form-data">
+                    <!-- Campos hidden para estoquista garantir que valores sejam enviados -->
+                    <input type="hidden" th:if="${isEstoquista}" name="nome" th:value="${produto.nome}">
+                    <input type="hidden" th:if="${isEstoquista}" name="avaliacao" th:value="${produto.avaliacao}">
+                    <input type="hidden" th:if="${isEstoquista}" name="descricaoDetalhada" th:value="${produto.descricaoDetalhada}">
+                    <input type="hidden" th:if="${isEstoquista}" name="preco" th:value="${produto.preco}">
                     <div class="form-group">
                         <label for="nome">📝 Nome do Produto *</label>
-                        <input type="text" id="nome" name="nome" th:value="${produto.nome}" maxlength="200" th:disabled="${isEstoquista}" required>
+                        <input type="text" id="nome" name="nome" th:value="${produto.nome}" maxlength="200" 
+                               th:readonly="${isEstoquista}" th:required="${!isEstoquista}">
                         <small>Máximo 200 caracteres</small>
                     </div>
 
                     <div class="form-group">
                         <label for="avaliacao">⭐ Avaliação *</label>
-                        <select id="avaliacao" name="avaliacao" th:disabled="${isEstoquista}" required>
+                        <select id="avaliacao" name="avaliacao" th:disabled="${isEstoquista}" th:required="${!isEstoquista}">
                             <option value="">Selecione uma avaliação...</option>
                             <option value="1.0" th:selected="${produto.avaliacao == 1.0}">⭐ 1.0</option>
                             <option value="1.5" th:selected="${produto.avaliacao == 1.5}">⭐ 1.5</option>
@@ -60,13 +66,16 @@
 
                     <div class="form-group">
                         <label for="descricaoDetalhada">📄 Descrição Detalhada *</label>
-                        <textarea id="descricaoDetalhada" name="descricaoDetalhada" maxlength="2000" th:disabled="${isEstoquista}" required th:text="${produto.descricaoDetalhada}"></textarea>
+                        <textarea id="descricaoDetalhada" name="descricaoDetalhada" maxlength="2000" 
+                                  th:readonly="${isEstoquista}" th:required="${!isEstoquista}" 
+                                  th:text="${produto.descricaoDetalhada}"></textarea>
                         <small>Máximo 2000 caracteres</small>
                     </div>
 
                     <div class="form-group">
                         <label for="preco">💰 Preço do Produto *</label>
-                        <input type="number" id="preco" name="preco" th:value="${produto.preco}" step="0.01" min="0.01" th:disabled="${isEstoquista}" required>
+                        <input type="number" id="preco" name="preco" th:value="${produto.preco}" step="0.01" min="0.01" 
+                               th:readonly="${isEstoquista}" th:required="${!isEstoquista}">
                         <small>Valor monetário com 2 casas decimais</small>
                     </div>
 
