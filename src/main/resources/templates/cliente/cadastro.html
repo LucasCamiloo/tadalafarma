@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>👤 Cadastro de Cliente</h1>
+                <p class="subtitle">Crie sua conta na Tadalafarma</p>
+            </div>
+            <a href="/login">← Voltar ao Login</a>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/cadastro}" id="formCadastro">
+                    <h3>📋 Dados Pessoais</h3>
+                    
+                    <div class="form-group">
+                        <label for="nome">👤 Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" th:value="${nome}" placeholder="Digite seu nome completo" required>
+                        <small>Deve ter pelo menos 2 palavras com 3 letras cada</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cpf">📄 CPF *</label>
+                        <input type="text" id="cpf" name="cpf" th:value="${cpf}" placeholder="00000000000" maxlength="11" required>
+                        <small>Apenas números, sem pontos ou traços</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">📧 Email *</label>
+                        <input type="email" id="email" name="email" th:value="${email}" placeholder="seu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dataNascimento">🎂 Data de Nascimento *</label>
+                        <input type="date" id="dataNascimento" name="dataNascimento" th:value="${dataNascimento}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="genero">⚧ Gênero *</label>
+                        <select id="genero" name="genero" required>
+                            <option value="">Selecione...</option>
+                            <option value="masculino" th:selected="${genero == 'masculino'}">Masculino</option>
+                            <option value="feminino" th:selected="${genero == 'feminino'}">Feminino</option>
+                            <option value="outro" th:selected="${genero == 'outro'}">Outro</option>
+                            <option value="não informado" th:selected="${genero == 'não informado'}">Não informado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senha">🔒 Senha *</label>
+                        <input type="password" id="senha" name="senha" placeholder="Digite uma senha segura" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmaSenha">🔒 Confirmar Senha *</label>
+                        <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Digite a senha novamente" required>
+                    </div>
+                    
+                    <h3>🏠 Endereço de Faturamento</h3>
+                    
+                    <div class="form-group">
+                        <label for="cep">📮 CEP *</label>
+                        <input type="text" id="cep" name="cep" th:value="${cep}" placeholder="00000000" maxlength="8" required>
+                        <button type="button" id="btnBuscarCep" class="btn btn-secondary">Buscar CEP</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="logradouro">🛣️ Logradouro *</label>
+                        <input type="text" id="logradouro" name="logradouro" th:value="${logradouro}" placeholder="Rua, Avenida, etc." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="numero">🔢 Número *</label>
+                        <input type="text" id="numero" name="numero" th:value="${numero}" placeholder="123" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="complemento">🏢 Complemento</label>
+                        <input type="text" id="complemento" name="complemento" th:value="${complemento}" placeholder="Apartamento, Sala, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bairro">🏘️ Bairro *</label>
+                        <input type="text" id="bairro" name="bairro" th:value="${bairro}" placeholder="Nome do bairro" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cidade">🏙️ Cidade *</label>
+                        <input type="text" id="cidade" name="cidade" th:value="${cidade}" placeholder="Nome da cidade" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uf">🗺️ UF *</label>
+                        <input type="text" id="uf" name="uf" th:value="${uf}" placeholder="SP" maxlength="2" required>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Informação:</strong> O endereço de entrega será uma cópia do endereço de faturamento. Você poderá adicionar outros endereços após o cadastro.
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">✓ Cadastrar</button>
+                        <a href="/login" class="btn btn-secondary">✕ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Aguardar o carregamento completo da página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Máscara para CPF
+            var cpfInput = document.getElementById('cpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '');
+                });
+            }
+            
+            // Máscara para CEP
+            var cepInput = document.getElementById('cep');
+            if (cepInput) {
+                cepInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '');
+                });
+            }
+            
+            // Buscar CEP
+            var btnBuscarCep = document.getElementById('btnBuscarCep');
+            if (btnBuscarCep) {
+                btnBuscarCep.addEventListener('click', function() {
+                    var cep = document.getElementById('cep').value.replace(/\D/g, '');
+                    if (cep.length === 8) {
+                        fetch('/api/cep/' + cep)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.logradouro) {
+                                    document.getElementById('logradouro').value = data.logradouro;
+                                    document.getElementById('bairro').value = data.bairro;
+                                    document.getElementById('cidade').value = data.localidade;
+                                    document.getElementById('uf').value = data.uf;
+                                } else {
+                                    alert('CEP não encontrado');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erro ao buscar CEP:', error);
+                                alert('Erro ao buscar CEP');
+                            });
+                    } else {
+                        alert('CEP deve ter 8 dígitos');
+                    }
+                });
+            }
+            
+            // Validação de senha
+            var confirmaSenhaInput = document.getElementById('confirmaSenha');
+            var senhaInput = document.getElementById('senha');
+            if (confirmaSenhaInput && senhaInput) {
+                confirmaSenhaInput.addEventListener('input', function() {
+                    var senha = senhaInput.value;
+                    var confirmaSenha = this.value;
+                    
+                    if (senha !== confirmaSenha) {
+                        this.style.borderColor = 'red';
+                    } else {
+                        this.style.borderColor = 'green';
+                    }
+                });
+            }
+            
+            // Validação do formulário antes do submit
+            var form = document.getElementById('formCadastro');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Verificar se todos os campos obrigatórios estão preenchidos
+                    var requiredFields = form.querySelectorAll('input[required], select[required]');
+                    var allValid = true;
+                    
+                    requiredFields.forEach(function(field) {
+                        if (!field.value.trim()) {
+                            allValid = false;
+                            field.style.borderColor = 'red';
+                        } else {
+                            field.style.borderColor = '';
+                        }
+                    });
+                    
+                    if (!allValid) {
+                        e.preventDefault();
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                        return false;
+                    }
+                    
+                    // Verificar se as senhas conferem
+                    var senha = document.getElementById('senha').value;
+                    var confirmaSenha = document.getElementById('confirmaSenha').value;
+                    
+                    if (senha !== confirmaSenha) {
+                        e.preventDefault();
+                        alert('As senhas não conferem.');
+                        return false;
+                    }
+                    
+                    return true;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

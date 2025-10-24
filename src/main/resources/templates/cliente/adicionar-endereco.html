@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Endereço - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>➕ Adicionar Endereço</h1>
+                <p class="subtitle">Adicione um novo endereço de entrega</p>
+            </div>
+            <a href="/cliente/enderecos">← Voltar aos Endereços</a>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/cliente/adicionar-endereco}" id="formEndereco">
+                    <h3>📍 Novo Endereço de Entrega</h3>
+                    
+                    <div class="form-group">
+                        <label for="cep">📮 CEP *</label>
+                        <input type="text" id="cep" name="cep" th:value="${cep}" placeholder="00000000" maxlength="8" required>
+                        <button type="button" id="btnBuscarCep" class="btn btn-secondary">Buscar CEP</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="logradouro">🛣️ Logradouro *</label>
+                        <input type="text" id="logradouro" name="logradouro" th:value="${logradouro}" placeholder="Rua, Avenida, etc." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="numero">🔢 Número *</label>
+                        <input type="text" id="numero" name="numero" th:value="${numero}" placeholder="123" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="complemento">🏢 Complemento</label>
+                        <input type="text" id="complemento" name="complemento" th:value="${complemento}" placeholder="Apartamento, Sala, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bairro">🏘️ Bairro *</label>
+                        <input type="text" id="bairro" name="bairro" th:value="${bairro}" placeholder="Nome do bairro" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cidade">🏙️ Cidade *</label>
+                        <input type="text" id="cidade" name="cidade" th:value="${cidade}" placeholder="Nome da cidade" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uf">🗺️ UF *</label>
+                        <input type="text" id="uf" name="uf" th:value="${uf}" placeholder="SP" maxlength="2" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="definirComoPadrao" name="definirComoPadrao" value="true">
+                            ⭐ Definir como endereço padrão
+                        </label>
+                        <small>O endereço padrão será pré-carregado no checkout</small>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Informação:</strong> Você pode ter múltiplos endereços de entrega. Apenas um pode ser o padrão.
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">✓ Adicionar Endereço</button>
+                        <a href="/cliente/enderecos" class="btn btn-secondary">✕ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Máscara para CEP
+            var cepInput = document.getElementById('cep');
+            if (cepInput) {
+                cepInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '');
+                });
+            }
+            
+            // Buscar CEP
+            var btnBuscarCep = document.getElementById('btnBuscarCep');
+            if (btnBuscarCep) {
+                btnBuscarCep.addEventListener('click', function() {
+                    var cep = document.getElementById('cep').value.replace(/\D/g, '');
+                    if (cep.length === 8) {
+                        fetch('/api/cep/' + cep)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.logradouro) {
+                                    document.getElementById('logradouro').value = data.logradouro;
+                                    document.getElementById('bairro').value = data.bairro;
+                                    document.getElementById('cidade').value = data.localidade;
+                                    document.getElementById('uf').value = data.uf;
+                                } else {
+                                    alert('CEP não encontrado');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erro ao buscar CEP:', error);
+                                alert('Erro ao buscar CEP');
+                            });
+                    } else {
+                        alert('CEP deve ter 8 dígitos');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Backoffice Tadalafarma</title>
+    <title>Login - Tadalafarma</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
             <div class="brand">
                 <div class="brand-icon">💊</div>
                 <h1>Tadalafarma</h1>
-                <p>Sistema de Backoffice</p>
+                <p>Faça login em sua conta</p>
             </div>
             
             <div th:if="${erro}" class="message error">
@@ -27,7 +27,7 @@
                 <span th:text="${mensagem}"></span>
             </div>
             
-            <form method="post" th:action="@{/backoffice/login}">
+            <form method="post" th:action="@{/login}">
                 <div class="form-group">
                     <label for="email">📧 Email</label>
                     <input type="email" id="email" name="email" placeholder="seu@email.com" required>
@@ -38,19 +38,15 @@
                     <input type="password" id="senha" name="senha" placeholder="••••••••" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary">🚀 Entrar (Backoffice)</button>
+                <button type="submit" class="btn btn-primary">🚀 Entrar</button>
             </form>
             
-            <div class="divider">
-                <span>ou</span>
+            <div class="cadastro-link">
+                <p>Não tem uma conta? <a href="/cadastro">Cadastre-se aqui</a></p>
             </div>
             
             <div class="loja-link">
                 <p><a href="/loja">← Voltar para a Loja</a></p>
-            </div>
-            
-            <div class="info-box">
-                <strong>⚠️ Atenção:</strong> Esta área é exclusiva para usuários do backoffice (Administradores e Estoquistas).
             </div>
         </div>
     </div>

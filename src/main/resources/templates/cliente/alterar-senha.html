@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Senha - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>🔒 Alterar Senha</h1>
+                <p class="subtitle">Modifique sua senha de acesso</p>
+            </div>
+            <a href="/cliente/perfil">← Voltar ao Perfil</a>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/cliente/alterar-senha}" id="formSenha">
+                    <div class="form-group">
+                        <label for="novaSenha">🔒 Nova Senha *</label>
+                        <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite sua nova senha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmaSenha">🔒 Confirmar Nova Senha *</label>
+                        <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Digite a nova senha novamente" required>
+                        <small id="senhaMatch"></small>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>⚠️ Atenção:</strong> Escolha uma senha segura com pelo menos 6 caracteres.
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">✓ Alterar Senha</button>
+                        <a href="/cliente/perfil" class="btn btn-secondary">✕ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validação de senha
+            var confirmaSenhaInput = document.getElementById('confirmaSenha');
+            var senhaInput = document.getElementById('novaSenha');
+            var matchElement = document.getElementById('senhaMatch');
+            
+            if (confirmaSenhaInput && senhaInput && matchElement) {
+                confirmaSenhaInput.addEventListener('input', function() {
+                    var novaSenha = senhaInput.value;
+                    var confirmaSenha = this.value;
+                    
+                    if (confirmaSenha.length > 0) {
+                        if (novaSenha === confirmaSenha) {
+                            matchElement.textContent = '✅ Senhas conferem';
+                            matchElement.style.color = 'green';
+                            this.style.borderColor = 'green';
+                        } else {
+                            matchElement.textContent = '❌ Senhas não conferem';
+                            matchElement.style.color = 'red';
+                            this.style.borderColor = 'red';
+                        }
+                    } else {
+                        matchElement.textContent = '';
+                        this.style.borderColor = '';
+                    }
+                });
+                
+                senhaInput.addEventListener('input', function() {
+                    confirmaSenhaInput.dispatchEvent(new Event('input'));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
