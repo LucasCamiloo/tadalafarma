@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Dados - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>✏️ Alterar Dados</h1>
+                <p class="subtitle">Modifique suas informações pessoais</p>
+            </div>
+            <a href="/cliente/perfil">← Voltar ao Perfil</a>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/cliente/alterar-dados}">
+                    <div class="form-group">
+                        <label for="nome">👤 Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" th:value="${cliente.nome}" placeholder="Digite seu nome completo" required>
+                        <small>Deve ter pelo menos 2 palavras com 3 letras cada</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dataNascimento">🎂 Data de Nascimento *</label>
+                        <input type="date" id="dataNascimento" name="dataNascimento" th:value="${cliente.dataNascimento}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="genero">⚧ Gênero *</label>
+                        <select id="genero" name="genero" required>
+                            <option value="">Selecione...</option>
+                            <option value="masculino" th:selected="${cliente.genero == 'masculino'}">Masculino</option>
+                            <option value="feminino" th:selected="${cliente.genero == 'feminino'}">Feminino</option>
+                            <option value="outro" th:selected="${cliente.genero == 'outro'}">Outro</option>
+                            <option value="não informado" th:selected="${cliente.genero == 'não informado'}">Não informado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Informação:</strong> CPF e Email não podem ser alterados por questões de segurança.
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">✓ Salvar Alterações</button>
+                        <a href="/cliente/perfil" class="btn btn-secondary">✕ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

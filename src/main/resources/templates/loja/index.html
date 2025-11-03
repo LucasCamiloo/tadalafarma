@@ -14,7 +14,14 @@
                     <img th:src="@{/images/logo.png}" alt="Logo Tadala Farma">
                 </div>
                 <div class="header-right">
-                    <a href="#" class="login-link">Faça login / Crie seu login</a>
+                    <div class="user-actions" th:if="${clienteLogado == null}">
+                        <a th:href="@{/login}" class="login-link">Faça login / Crie seu login</a>
+                    </div>
+                    <div class="user-actions" th:if="${clienteLogado != null}">
+                        <span class="welcome-text">Olá, <span th:text="${clienteLogado.nome}"></span>!</span>
+                        <a th:href="@{/cliente/perfil}" class="profile-link">Meu Perfil</a>
+                        <a th:href="@{/logout}" class="logout-link">Sair</a>
+                    </div>
                     <a th:href="@{/loja/carrinho}" class="cart-icon">
                         🛒
                         <span class="cart-count" th:if="${totalItensCarrinho > 0}" th:text="${totalItensCarrinho}">0</span>
@@ -26,6 +33,10 @@
 
     <main class="main-content">
         <div class="container">
+            <div th:if="${mensagem}" class="message info">
+                <span th:text="${mensagem}"></span>
+            </div>
+            
             <h1 class="page-title">Nossos Produtos</h1>
             
             <div class="produtos-grid">
