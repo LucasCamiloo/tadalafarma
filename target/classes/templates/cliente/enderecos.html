@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Endereços - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>📦 Gerenciar Endereços</h1>
+                <p class="subtitle">Gerencie seus endereços de entrega</p>
+            </div>
+            <a href="/cliente/perfil">← Voltar ao Perfil</a>
+        </div>
+        
+        <div th:if="${sucesso}" class="message success">
+            <strong>✅ Sucesso:</strong> <span th:text="${sucesso}"></span>
+        </div>
+        
+        <div th:if="${param.freteAtualizado}" class="message info">
+            <strong>🚚 Frete Atualizado:</strong> O cálculo de frete foi atualizado automaticamente com base no novo endereço padrão.
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="addresses-container">
+                <div class="addresses-section">
+                    <h3>🏠 Endereço de Faturamento</h3>
+                    <div class="address-card" th:if="${cliente.enderecoFaturamento}">
+                        <div class="address-header">
+                            <h4>📋 Endereço de Faturamento</h4>
+                        </div>
+                        <div class="address-details">
+                            <p><strong>CEP:</strong> <span th:text="${cliente.enderecoFaturamento.cep}"></span></p>
+                            <p><strong>Endereço:</strong> <span th:text="${cliente.enderecoFaturamento.logradouro}"></span>, 
+                               <span th:text="${cliente.enderecoFaturamento.numero}"></span></p>
+                            <p th:if="${cliente.enderecoFaturamento.complemento}">
+                               <strong>Complemento:</strong> <span th:text="${cliente.enderecoFaturamento.complemento}"></span>
+                            </p>
+                            <p><strong>Bairro:</strong> <span th:text="${cliente.enderecoFaturamento.bairro}"></span></p>
+                            <p><strong>Cidade:</strong> <span th:text="${cliente.enderecoFaturamento.cidade}"></span> - 
+                               <span th:text="${cliente.enderecoFaturamento.uf}"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="addresses-section">
+                    <h3>📦 Endereços de Entrega</h3>
+                    <div class="addresses-list" th:if="${cliente.enderecosEntrega != null and !cliente.enderecosEntrega.empty}">
+                        <div class="address-card" th:each="endereco : ${cliente.enderecosEntrega}">
+                            <div class="address-header">
+                                <h4 th:if="${endereco.padrao}" class="default-badge">⭐ Endereço Padrão</h4>
+                                <h4 th:unless="${endereco.padrao}">📍 Endereço de Entrega</h4>
+                            </div>
+                            <div class="address-details">
+                                <p><strong>CEP:</strong> <span th:text="${endereco.cep}"></span></p>
+                                <p><strong>Endereço:</strong> <span th:text="${endereco.logradouro}"></span>, 
+                                   <span th:text="${endereco.numero}"></span></p>
+                                <p th:if="${endereco.complemento}">
+                                   <strong>Complemento:</strong> <span th:text="${endereco.complemento}"></span>
+                                </p>
+                                <p><strong>Bairro:</strong> <span th:text="${endereco.bairro}"></span></p>
+                                <p><strong>Cidade:</strong> <span th:text="${endereco.cidade}"></span> - 
+                                   <span th:text="${endereco.uf}"></span></p>
+                            </div>
+                            <div class="address-actions" th:unless="${endereco.padrao}">
+                                <form method="post" th:action="@{/cliente/alterar-endereco-padrao}" style="display: inline;">
+                                    <input type="hidden" name="enderecoId" th:value="${endereco.id}">
+                                    <button type="submit" class="btn btn-small btn-primary">⭐ Definir como Padrão</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${cliente.enderecosEntrega == null or cliente.enderecosEntrega.empty}" class="no-addresses">
+                        <p>Nenhum endereço de entrega cadastrado.</p>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <a href="/cliente/adicionar-endereco" class="btn btn-success">➕ Adicionar Novo Endereço</a>
+                    <a href="/cliente/perfil" class="btn btn-secondary">📋 Voltar ao Perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

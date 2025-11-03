@@ -16,7 +16,14 @@
                     </a>
                 </div>
                 <div class="header-right">
-                    <a href="#" class="login-link">Faça login / Crie seu login</a>
+                    <div class="user-actions" th:if="${clienteLogado == null}">
+                        <a th:href="@{/login}" class="login-link">Faça login / Crie seu login</a>
+                    </div>
+                    <div class="user-actions" th:if="${clienteLogado != null}">
+                        <span class="welcome-text">Olá, <span th:text="${clienteLogado.nome}"></span>!</span>
+                        <a th:href="@{/cliente/perfil}" class="profile-link">Meu Perfil</a>
+                        <a th:href="@{/logout}" class="logout-link">Sair</a>
+                    </div>
                     <a th:href="@{/loja/carrinho}" class="cart-icon active">
                         🛒
                         <span class="cart-count" th:if="${totalItensCarrinho > 0}" th:text="${totalItensCarrinho}">0</span>
@@ -79,57 +86,62 @@
                     </div>
 
                     <div class="frete-section">
-                        <h3>Calcular Frete</h3>
-                        <form th:action="@{/loja/carrinho/calcular-frete}" method="post" class="frete-form">
-                            <div class="form-group">
-                                <label for="cep">CEP:</label>
-                                <input type="text" id="cep" name="cep" placeholder="00000-000" 
-                                       maxlength="9" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Escolha o tipo de frete:</label>
-                                <div class="frete-opcoes">
-                                    <label class="frete-opcao">
-                                        <input type="radio" name="valorFrete" 
-                                               th:value="${opcoesFreteValores[0]}" 
-                                               th:checked="${freteAtual == opcoesFreteValores[0]}" required>
-                                        <div class="frete-info">
-                                            <span th:text="${opcoesFreteNomes[0]}">Econômico</span>
-                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[0], 1, 'POINT', 2, 'COMMA')}">
-                                                R$ 10,00
-                                            </strong>
-                                        </div>
-                                    </label>
-                                    
-                                    <label class="frete-opcao">
-                                        <input type="radio" name="valorFrete" 
-                                               th:value="${opcoesFreteValores[1]}"
-                                               th:checked="${freteAtual == opcoesFreteValores[1]}">
-                                        <div class="frete-info">
-                                            <span th:text="${opcoesFreteNomes[1]}">Normal</span>
-                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[1], 1, 'POINT', 2, 'COMMA')}">
-                                                R$ 20,00
-                                            </strong>
-                                        </div>
-                                    </label>
-                                    
-                                    <label class="frete-opcao">
-                                        <input type="radio" name="valorFrete" 
-                                               th:value="${opcoesFreteValores[2]}"
-                                               th:checked="${freteAtual == opcoesFreteValores[2]}">
-                                        <div class="frete-info">
-                                            <span th:text="${opcoesFreteNomes[2]}">Expresso</span>
-                                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[2], 1, 'POINT', 2, 'COMMA')}">
-                                                R$ 30,00
-                                            </strong>
-                                        </div>
-                                    </label>
+                        <h3>Escolher Tipo de Frete</h3>
+                        <div class="frete-info-display">
+                            <div th:if="${clienteLogado != null and clienteLogado.enderecosEntrega != null and !clienteLogado.enderecosEntrega.empty}">
+                                <p><strong>Endereço de Entrega:</strong></p>
+                                <div th:each="endereco : ${clienteLogado.enderecosEntrega}" 
+                                     th:if="${endereco.padrao != null and endereco.padrao}">
+                                    <p th:text="${endereco.logradouro + ', ' + endereco.numero + ' - ' + endereco.bairro + ', ' + endereco.cidade + ' - ' + endereco.uf}"></p>
+                                    <p><strong>CEP:</strong> <span th:text="${endereco.cep}"></span></p>
                                 </div>
                             </div>
+                            <div th:if="${clienteLogado == null or clienteLogado.enderecosEntrega == null or clienteLogado.enderecosEntrega.empty}">
+                                <p class="frete-warning">⚠️ Faça login e cadastre um endereço para calcular o frete automaticamente.</p>
+                                <a href="/login" class="btn-login-frete">Fazer Login</a>
+                            </div>
+                        </div>
+                        
+                        <div class="frete-opcoes" th:if="${clienteLogado != null and clienteLogado.enderecosEntrega != null and !clienteLogado.enderecosEntrega.empty}">
+                            <label class="frete-opcao">
+                                <input type="radio" name="valorFrete" 
+                                       th:value="${opcoesFreteValores[0]}" 
+                                       th:checked="${freteAtual == opcoesFreteValores[0]}" 
+                                       onchange="atualizarFrete(this.value)">
+                                <div class="frete-info">
+                                    <span th:text="${opcoesFreteNomes[0]}">Econômico</span>
+                                    <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[0], 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 15,00
+                                    </strong>
+                                </div>
+                            </label>
                             
-                            <button type="submit" class="btn-calcular-frete">Atualizar Frete</button>
-                        </form>
+                            <label class="frete-opcao">
+                                <input type="radio" name="valorFrete" 
+                                       th:value="${opcoesFreteValores[1]}"
+                                       th:checked="${freteAtual == opcoesFreteValores[1]}"
+                                       onchange="atualizarFrete(this.value)">
+                                <div class="frete-info">
+                                    <span th:text="${opcoesFreteNomes[1]}">Normal</span>
+                                    <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[1], 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 25,00
+                                    </strong>
+                                </div>
+                            </label>
+                            
+                            <label class="frete-opcao">
+                                <input type="radio" name="valorFrete" 
+                                       th:value="${opcoesFreteValores[2]}"
+                                       th:checked="${freteAtual == opcoesFreteValores[2]}"
+                                       onchange="atualizarFrete(this.value)">
+                                <div class="frete-info">
+                                    <span th:text="${opcoesFreteNomes[2]}">Expresso</span>
+                                    <strong th:text="'R$ ' + ${#numbers.formatDecimal(opcoesFreteValores[2], 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 35,00
+                                    </strong>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="resumo-linha">
@@ -161,14 +173,25 @@
     </footer>
 
     <script>
-        // Máscara de CEP
-        document.getElementById('cep').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 5) {
-                value = value.substring(0, 5) + '-' + value.substring(5, 8);
-            }
-            e.target.value = value;
-        });
+        function atualizarFrete(valorFrete) {
+            // Enviar requisição para atualizar o frete
+            fetch('/loja/carrinho/atualizar-frete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'valorFrete=' + encodeURIComponent(valorFrete)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Recarregar a página para mostrar o novo total
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar frete:', error);
+            });
+        }
     </script>
 </body>
 </html>

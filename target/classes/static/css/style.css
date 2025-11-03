@@ -151,6 +151,12 @@ body {
     border-color: var(--primary-color);
 }
 
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 /* ===================================
    MENSAGENS DE FEEDBACK
    =================================== */
@@ -948,20 +954,240 @@ tbody td {
     }
 }
 
-@media (max-width: 480px) {
-    .login-box {
-        padding: 25px;
-    }
-    
-    .page-container {
-        padding: 15px;
-    }
-    
-    .brand h1 {
-        font-size: 24px;
-    }
-    
-    .header h1 {
-        font-size: 22px;
-    }
+/* ===================================
+   ESTILOS ESPECÍFICOS PARA CLIENTES
+   =================================== */
+
+/* Divider para login */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.divider span {
+    background: var(--bg-primary);
+    padding: 0 15px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Link de cadastro */
+.cadastro-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.cadastro-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cadastro-link a:hover {
+    text-decoration: underline;
+}
+
+/* Container do perfil */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.profile-section {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.profile-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Grid de informações */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.info-item span {
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+/* Informações de endereço */
+.address-info {
+    background: var(--primary-light);
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--primary-color);
+}
+
+.address-info p {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.address-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Lista de endereços */
+.addresses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.address-item, .address-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.address-header {
+    margin-bottom: 15px;
+}
+
+.address-header h4 {
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.default-badge {
+    color: var(--primary-color) !important;
+}
+
+.address-details {
+    margin-bottom: 15px;
+}
+
+.address-details p {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.address-details p:last-child {
+    margin-bottom: 0;
+}
+
+.address-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Botões pequenos */
+.btn-small {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+/* Container de endereços */
+.addresses-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.addresses-section {
+    margin-bottom: 30px;
+}
+
+.addresses-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Sem endereços */
+.no-addresses {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--border-color);
+}
+
+/* Checkbox personalizado */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+/* Link para área administrativa */
+.admin-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.admin-link a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.admin-link a:hover {
+    text-decoration: underline;
+}
+
+/* Link para voltar à loja */
+.loja-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.loja-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.loja-link a:hover {
+    text-decoration: underline;
 }

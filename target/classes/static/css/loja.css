@@ -45,18 +45,6 @@ body {
     gap: 30px;
 }
 
-.login-link {
-    color: #FF4545;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.login-link:hover {
-    text-decoration: underline;
-    color: #dd3030;
-}
-
 .cart-icon {
     position: relative;
     font-size: 28px;
@@ -86,6 +74,73 @@ body {
     font-weight: bold;
     min-width: 20px;
     text-align: center;
+}
+
+/* Ações do usuário */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.login-link {
+    color: #FF4545;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 2px solid #FF4545;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.login-link:hover {
+    background-color: #FF4545;
+    color: white;
+}
+
+.welcome-text {
+    color: #333;
+    font-weight: 500;
+}
+
+.profile-link, .logout-link {
+    color: #FF4545;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.profile-link:hover, .logout-link:hover {
+    background-color: #FF4545;
+    color: white;
+}
+
+/* Mensagens */
+.message {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.message.info {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border-left: 4px solid #1976d2;
+}
+
+.message.success {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
 }
 
 /* Main Content */
@@ -561,27 +616,44 @@ body {
 .frete-section h3 {
     font-size: 18px;
     margin-bottom: 15px;
-    color: #333;
+    color: #FF4545;
     font-weight: 600;
 }
 
-.frete-form .form-group {
+.frete-info-display {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #FF4545;
+    margin-bottom: 20px;
+}
+
+.frete-info-display p {
+    margin: 8px 0;
+    color: #333;
+}
+
+.frete-warning {
+    color: #f59e0b;
+    font-weight: 500;
     margin-bottom: 15px;
 }
 
-.frete-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+.btn-login-frete {
+    background: #FF4545;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    display: inline-block;
 }
 
-.frete-form input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
+.btn-login-frete:hover {
+    background: #dd3030;
+    color: white;
+    text-decoration: none;
 }
 
 .frete-opcoes {
@@ -621,24 +693,6 @@ body {
     justify-content: space-between;
     width: 100%;
     font-size: 14px;
-}
-
-.btn-calcular-frete {
-    width: 100%;
-    padding: 10px;
-    background-color: white;
-    color: #FF4545;
-    border: 2px solid #FF4545;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 10px;
-}
-
-.btn-calcular-frete:hover {
-    background-color: #FF4545;
-    color: white;
 }
 
 .btn-finalizar {
