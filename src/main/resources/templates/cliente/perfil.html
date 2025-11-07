@@ -61,6 +61,13 @@
                 </div>
                 
                 <div class="profile-section">
+                    <h3>📦 Meus Pedidos</h3>
+                    <div class="button-group">
+                        <a href="/cliente/meus-pedidos" class="btn btn-primary">Ver Meus Pedidos</a>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
                     <h3>🏠 Endereço de Faturamento</h3>
                     <div class="address-info" th:if="${cliente.enderecoFaturamento}">
                         <p><strong>CEP:</strong> <span th:text="${cliente.enderecoFaturamento.cep}"></span></p>

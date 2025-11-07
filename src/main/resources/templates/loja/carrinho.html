@@ -154,7 +154,9 @@
                         <span th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
                     </div>
 
-                    <button class="btn-finalizar">Finalizar Compra</button>
+                    <form th:action="@{/checkout/iniciar}" method="post" style="display: inline;">
+                        <button type="submit" class="btn-finalizar">Finalizar Compra</button>
+                    </form>
                     <a th:href="@{/loja}" class="btn-continuar-comprando">Continuar Comprando</a>
                 </div>
             </div>

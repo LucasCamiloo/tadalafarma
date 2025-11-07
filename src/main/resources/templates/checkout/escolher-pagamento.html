@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma de Pagamento - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>💳 Forma de Pagamento</h1>
+                <p class="subtitle">Escolha como deseja pagar</p>
+            </div>
+            <div class="header-actions">
+                <a href="/checkout/endereco" class="btn btn-secondary">← Voltar</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <form method="post" th:action="@{/checkout/pagamento}" id="formPagamento">
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="formaPagamento" value="BOLETO" required onchange="toggleCartaoFields(false)">
+                            <div class="payment-content">
+                                <h3>📄 Boleto Bancário</h3>
+                                <p>Você receberá o boleto por email após a confirmação do pedido</p>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-option">
+                            <input type="radio" name="formaPagamento" value="CARTAO" required onchange="toggleCartaoFields(true)">
+                            <div class="payment-content">
+                                <h3>💳 Cartão de Crédito</h3>
+                                <p>Pagamento parcelado em até 12x</p>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div id="dadosCartao" style="display: none; margin-top: 20px;">
+                        <h3>Dados do Cartão</h3>
+                        
+                        <div class="form-group">
+                            <label for="numeroCartao">🔢 Número do Cartão *</label>
+                            <input type="text" id="numeroCartao" name="numeroCartao" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="codigoVerificador">🔐 Código Verificador (CVV) *</label>
+                            <input type="text" id="codigoVerificador" name="codigoVerificador" placeholder="000" maxlength="3" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nomeCompleto">👤 Nome Completo (como está no cartão) *</label>
+                            <input type="text" id="nomeCompleto" name="nomeCompleto" placeholder="NOME COMPLETO" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dataVencimento">📅 Data de Vencimento (MM/AA) *</label>
+                            <input type="text" id="dataVencimento" name="dataVencimento" placeholder="MM/AA" maxlength="5" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantidadeParcelas">🔢 Quantidade de Parcelas *</label>
+                            <select id="quantidadeParcelas" name="quantidadeParcelas" required>
+                                <option value="">Selecione</option>
+                                <option value="1">1x sem juros</option>
+                                <option value="2">2x sem juros</option>
+                                <option value="3">3x sem juros</option>
+                                <option value="4">4x sem juros</option>
+                                <option value="5">5x sem juros</option>
+                                <option value="6">6x sem juros</option>
+                                <option value="7">7x sem juros</option>
+                                <option value="8">8x sem juros</option>
+                                <option value="9">9x sem juros</option>
+                                <option value="10">10x sem juros</option>
+                                <option value="11">11x sem juros</option>
+                                <option value="12">12x sem juros</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Continuar</button>
+                        <a href="/checkout/endereco" class="btn btn-secondary">Voltar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleCartaoFields(show) {
+            var dadosCartao = document.getElementById('dadosCartao');
+            var inputs = dadosCartao.querySelectorAll('input, select');
+            
+            if (show) {
+                dadosCartao.style.display = 'block';
+                inputs.forEach(input => input.required = true);
+            } else {
+                dadosCartao.style.display = 'none';
+                inputs.forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Máscara para número do cartão
+            var numeroCartao = document.getElementById('numeroCartao');
+            if (numeroCartao) {
+                numeroCartao.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+                });
+            }
+            
+            // Máscara para CVV
+            var cvv = document.getElementById('codigoVerificador');
+            if (cvv) {
+                cvv.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '');
+                });
+            }
+            
+            // Máscara para data de vencimento
+            var dataVencimento = document.getElementById('dataVencimento');
+            if (dataVencimento) {
+                dataVencimento.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').replace(/(\d{2})(?=\d)/g, '$1/');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

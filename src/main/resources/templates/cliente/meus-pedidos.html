@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>📦 Meus Pedidos</h1>
+                <p class="subtitle">Acompanhe seus pedidos</p>
+            </div>
+            <div class="header-actions">
+                <a href="/loja" class="btn btn-secondary">🏪 Voltar para a Loja</a>
+                <a href="/cliente/perfil" class="btn btn-secondary">👤 Meu Perfil</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div class="content-wrapper">
+            <div th:if="${not #lists.isEmpty(pedidos)}">
+                <div class="orders-list">
+                    <div class="order-item" th:each="pedido : ${pedidos}">
+                        <div class="order-header">
+                            <div class="order-number">
+                                <h3>Pedido #<span th:text="${pedido.numeroPedido}">000000</span></h3>
+                                <p class="order-date" th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}">
+                                    Data
+                                </p>
+                            </div>
+                            <div class="order-status">
+                                <span class="badge" th:text="${pedido.statusTexto}">Status</span>
+                            </div>
+                        </div>
+                        
+                        <div class="order-body">
+                            <div class="order-info">
+                                <p><strong>Valor Total:</strong> 
+                                    <span th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 0,00
+                                    </span>
+                                </p>
+                                <p><strong>Forma de Pagamento:</strong> 
+                                    <span th:text="${pedido.formaPagamento == 'BOLETO' ? 'Boleto Bancário' : 'Cartão de Crédito'}">
+                                        -
+                                    </span>
+                                </p>
+                            </div>
+                            
+                            <div class="order-actions">
+                                <a th:href="@{/cliente/pedido/{numero}(numero=${pedido.numeroPedido})}" 
+                                   class="btn btn-primary">
+                                    Ver Detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(pedidos)}" class="empty-state">
+                <p>Você ainda não possui pedidos.</p>
+                <a href="/loja" class="btn btn-primary">Começar a Comprar</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -3,6 +3,7 @@ package com.tadalafarma.Tadalafarma.service;
 import com.tadalafarma.Tadalafarma.model.Usuario;
 import com.tadalafarma.Tadalafarma.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -79,32 +80,60 @@ public class UsuarioService {
     
     // Autenticar usuário
     public Usuario autenticar(String email, String senha) {
-        System.out.println("=== AUTENTICANDO USUÁRIO ===");
-        System.out.println("Email: " + email);
-        
-        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
-        if (usuario.isPresent()) {
-            Usuario u = usuario.get();
-            System.out.println("Usuário encontrado:");
-            System.out.println("Nome: " + u.getNome());
-            System.out.println("Grupo: " + u.getGrupo());
-            System.out.println("Status: " + u.getStatus());
-            
-            if (u.getStatus() && verificarSenha(senha, u.getSenha())) {
-                System.out.println("Autenticação bem-sucedida!");
-                return u;
-            } else {
-                System.out.println("Falha na autenticação - Status: " + u.getStatus());
+        try {
+            Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+            if (usuario.isPresent()) {
+                Usuario u = usuario.get();
+                if (u.getStatus() && verificarSenha(senha, u.getSenha())) {
+                    return u;
+                }
             }
-        } else {
-            System.out.println("Usuário não encontrado!");
+        } catch (IncorrectResultSizeDataAccessException e) {
+            // Se houver duplicatas, buscar a primeira ocorrência
+            System.err.println("AVISO: Encontrados múltiplos registros com email " + email + ". Usando o primeiro.");
+            try {
+                Usuario usuario = usuarioRepository.findAll().stream()
+                    .filter(u -> email.equals(u.getEmail()))
+                    .filter(u -> u.getStatus() != null && u.getStatus())
+                    .findFirst()
+                    .orElse(null);
+                
+                if (usuario != null && verificarSenha(senha, usuario.getSenha())) {
+                    return usuario;
+                }
+            } catch (Exception ex) {
+                System.err.println("Erro ao buscar usuário duplicado: " + ex.getMessage());
+            }
         }
         return null;
     }
     
     // Listar todos os usuários
     public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        long maiorSequencial = usuarios.stream()
+            .filter(u -> u.getSequencialId() != null)
+            .mapToLong(Usuario::getSequencialId)
+            .max()
+            .orElse(0L);
+
+        boolean houveAtualizacao = false;
+
+        for (Usuario usuario : usuarios) {
+            if (usuario.getSequencialId() == null) {
+                maiorSequencial++;
+                usuario.setSequencialId(maiorSequencial);
+                usuarioRepository.save(usuario);
+                houveAtualizacao = true;
+            }
+        }
+
+        if (houveAtualizacao) {
+            usuarios = usuarioRepository.findAll();
+        }
+
+        return usuarios;
     }
     
     // Buscar usuário por ID

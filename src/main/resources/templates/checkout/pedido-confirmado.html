@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>✅ Pedido Confirmado</h1>
+                <p class="subtitle">Seu pedido foi registrado com sucesso</p>
+            </div>
+            <div class="header-actions">
+                <a href="/loja" class="btn btn-secondary">🏪 Voltar para a Loja</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="confirmation-container">
+                <div class="success-message">
+                    <h2>🎉 Pedido Realizado com Sucesso!</h2>
+                    <div th:if="${sucesso}" class="message success">
+                        <span th:text="${sucesso}"></span>
+                    </div>
+                </div>
+                
+                <div class="order-info">
+                    <h3>📋 Informações do Pedido</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Número do Pedido:</label>
+                            <strong th:text="${numeroPedido}">000000</strong>
+                        </div>
+                        <div class="info-item">
+                            <label>Valor Total:</label>
+                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="next-steps">
+                    <h3>📧 Próximos Passos</h3>
+                    <ul>
+                        <li>Você receberá um email de confirmação com os detalhes do pedido</li>
+                        <li>O pedido está com status: <strong>Aguardando Pagamento</strong></li>
+                        <li>Acompanhe seu pedido na seção "Meus Pedidos"</li>
+                        <li>Após o pagamento confirmado, seu pedido será enviado</li>
+                    </ul>
+                </div>
+                
+                <div class="action-buttons">
+                    <a th:href="@{/cliente/meus-pedidos}" class="btn btn-primary">Ver Meus Pedidos</a>
+                    <a th:href="@{/loja}" class="btn btn-secondary">Continuar Comprando</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

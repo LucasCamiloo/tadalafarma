@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo do Pedido - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>📋 Resumo do Pedido</h1>
+                <p class="subtitle">Revise seu pedido antes de finalizar</p>
+            </div>
+            <div class="header-actions">
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="summary-container">
+                <!-- Itens do Pedido -->
+                <div class="summary-section">
+                    <h2>🛍️ Itens do Pedido</h2>
+                    <div class="items-list">
+                        <div class="item-row" th:each="item : ${itens}">
+                            <div class="item-name">
+                                <p th:text="${item.produto.nome}">Nome do Produto</p>
+                            </div>
+                            <div class="item-quantity">
+                                <span th:text="${item.quantidade + 'x'}">1x</span>
+                            </div>
+                            <div class="item-price">
+                                <span th:text="'R$ ' + ${#numbers.formatDecimal(item.produto.preco, 1, 'POINT', 2, 'COMMA')}">
+                                    R$ 0,00
+                                </span>
+                            </div>
+                            <div class="item-total">
+                                <strong th:text="'R$ ' + ${#numbers.formatDecimal(item.total, 1, 'POINT', 2, 'COMMA')}">
+                                    R$ 0,00
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Endereço de Entrega -->
+                <div class="summary-section">
+                    <h2>📍 Endereço de Entrega</h2>
+                    <div class="address-box">
+                        <p><strong>Logradouro:</strong> <span th:text="${endereco.logradouro}"></span>, <span th:text="${endereco.numero}"></span></p>
+                        <p th:if="${endereco.complemento != null and !endereco.complemento.isEmpty()}">
+                            <strong>Complemento:</strong> <span th:text="${endereco.complemento}"></span>
+                        </p>
+                        <p><strong>Bairro:</strong> <span th:text="${endereco.bairro}"></span></p>
+                        <p><strong>Cidade:</strong> <span th:text="${endereco.cidade}"></span> - <span th:text="${endereco.uf}"></span></p>
+                        <p><strong>CEP:</strong> <span th:text="${endereco.cep}"></span></p>
+                    </div>
+                </div>
+                
+                <!-- Forma de Pagamento -->
+                <div class="summary-section">
+                    <h2>💳 Forma de Pagamento</h2>
+                    <div class="payment-box" th:if="${formaPagamento == 'BOLETO'}">
+                        <p><strong>Método:</strong> Boleto Bancário</p>
+                        <p class="info-text">Você receberá o boleto por email após a confirmação do pedido.</p>
+                    </div>
+                    <div class="payment-box" th:if="${formaPagamento == 'CARTAO'}">
+                        <p><strong>Método:</strong> Cartão de Crédito</p>
+                        <div th:if="${dadosCartao != null}">
+                            <p><strong>Cartão:</strong> <span th:text="${dadosCartao.numeroCartaoMascarado}"></span></p>
+                            <p><strong>Parcelas:</strong> <span th:text="${dadosCartao.quantidadeParcelas + 'x'}"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resumo Financeiro -->
+                <div class="summary-section">
+                    <h2>💰 Resumo Financeiro</h2>
+                    <div class="financial-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span th:text="'R$ ' + ${#numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Frete:</span>
+                            <span th:text="'R$ ' + ${#numbers.formatDecimal(frete, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botões de Ação -->
+                <div class="summary-actions">
+                    <form th:action="@{/checkout/finalizar}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success">✓ Confirmar Pedido</button>
+                    </form>
+                    <form th:action="@{/checkout/voltar}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary">← Voltar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

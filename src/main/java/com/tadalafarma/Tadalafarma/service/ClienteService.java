@@ -4,6 +4,7 @@ import com.tadalafarma.Tadalafarma.model.Cliente;
 import com.tadalafarma.Tadalafarma.model.Endereco;
 import com.tadalafarma.Tadalafarma.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -170,11 +171,29 @@ public class ClienteService {
     
     // Autenticar cliente
     public Cliente autenticar(String email, String senha) {
-        Optional<Cliente> clienteOpt = clienteRepository.findByEmail(email);
-        if (clienteOpt.isPresent()) {
-            Cliente cliente = clienteOpt.get();
-            if (cliente.getStatus() && verificarSenha(senha, cliente.getSenha())) {
-                return cliente;
+        try {
+            Optional<Cliente> clienteOpt = clienteRepository.findByEmail(email);
+            if (clienteOpt.isPresent()) {
+                Cliente cliente = clienteOpt.get();
+                if (cliente.getStatus() && verificarSenha(senha, cliente.getSenha())) {
+                    return cliente;
+                }
+            }
+        } catch (IncorrectResultSizeDataAccessException e) {
+            // Se houver duplicatas, buscar a primeira ocorrência
+            System.err.println("AVISO: Encontrados múltiplos registros com email " + email + ". Usando o primeiro.");
+            try {
+                Cliente cliente = clienteRepository.findAll().stream()
+                    .filter(c -> email.equals(c.getEmail()))
+                    .filter(c -> c.getStatus() != null && c.getStatus())
+                    .findFirst()
+                    .orElse(null);
+                
+                if (cliente != null && verificarSenha(senha, cliente.getSenha())) {
+                    return cliente;
+                }
+            } catch (Exception ex) {
+                System.err.println("Erro ao buscar cliente duplicado: " + ex.getMessage());
             }
         }
         return null;

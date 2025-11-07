@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolher Endereço - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>📍 Escolher Endereço de Entrega</h1>
+                <p class="subtitle">Selecione o endereço para entrega</p>
+            </div>
+            <div class="header-actions">
+                <a href="/loja/carrinho" class="btn btn-secondary">← Voltar</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div th:if="${not #lists.isEmpty(enderecos)}">
+                <form th:action="@{/checkout/endereco}" method="post">
+                    <div class="address-list">
+                        <div class="address-item" th:each="endereco : ${enderecos}">
+                            <label>
+                                <input type="radio" name="enderecoId" th:value="${endereco.id}" required>
+                                <div class="address-content">
+                                    <div class="address-header">
+                                        <h3 th:text="${endereco.padrao != null and endereco.padrao ? '🏠 Endereço Padrão' : ''}">
+                                            Endereço
+                                        </h3>
+                                    </div>
+                                    <div class="address-details">
+                                        <p><strong>Logradouro:</strong> <span th:text="${endereco.logradouro}"></span>, <span th:text="${endereco.numero}"></span></p>
+                                        <p th:if="${endereco.complemento != null and !endereco.complemento.isEmpty()}">
+                                            <strong>Complemento:</strong> <span th:text="${endereco.complemento}"></span>
+                                        </p>
+                                        <p><strong>Bairro:</strong> <span th:text="${endereco.bairro}"></span></p>
+                                        <p><strong>Cidade:</strong> <span th:text="${endereco.cidade}"></span> - <span th:text="${endereco.uf}"></span></p>
+                                        <p><strong>CEP:</strong> <span th:text="${endereco.cep}"></span></p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Continuar</button>
+                        <a href="/checkout/adicionar-endereco" class="btn btn-secondary">➕ Adicionar Novo Endereço</a>
+                    </div>
+                </form>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(enderecos)}" class="empty-state">
+                <p>Você não possui endereços cadastrados.</p>
+                <a href="/checkout/adicionar-endereco" class="btn btn-primary">Adicionar Endereço</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
