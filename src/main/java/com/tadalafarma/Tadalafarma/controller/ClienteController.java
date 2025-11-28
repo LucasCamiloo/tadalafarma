@@ -342,38 +342,57 @@ public class ClienteController {
     
     @PostMapping("/checkout/iniciar")
     public String iniciarCheckout(HttpSession session) {
-        // Verificar se cliente está logado
-        Cliente cliente = verificarSessaoCliente(session);
-        if (cliente == null) {
-            // Salvar flag para redirecionar após login
-            session.setAttribute("redirecionarAposLogin", "/checkout/endereco");
-            return "redirect:/login";
+        try {
+            // Verificar se cliente está logado
+            Cliente cliente = verificarSessaoCliente(session);
+            if (cliente == null) {
+                // Salvar flag para redirecionar após login
+                session.setAttribute("redirecionarAposLogin", "/checkout/endereco");
+                return "redirect:/login";
+            }
+            
+            // Verificar se há itens no carrinho
+            @SuppressWarnings("unchecked")
+            Map<Long, Integer> carrinho = (Map<Long, Integer>) session.getAttribute("carrinho");
+            if (carrinho == null || carrinho.isEmpty()) {
+                return "redirect:/loja/carrinho?erro=Carrinho vazio";
+            }
+            
+            // Redirecionar para escolha de endereço
+            return "redirect:/checkout/endereco";
+        } catch (Exception e) {
+            // Log do erro para debug
+            System.err.println("Erro ao iniciar checkout: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/loja/carrinho?erro=Erro ao iniciar checkout. Tente novamente.";
         }
-        
-        // Verificar se há itens no carrinho
-        @SuppressWarnings("unchecked")
-        Map<Long, Integer> carrinho = (Map<Long, Integer>) session.getAttribute("carrinho");
-        if (carrinho == null || carrinho.isEmpty()) {
-            return "redirect:/loja/carrinho?erro=Carrinho vazio";
-        }
-        
-        // Redirecionar para escolha de endereço
-        return "redirect:/checkout/endereco";
     }
     
     // ========== CHECKOUT - ESCOLHER ENDEREÇO ==========
     
     @GetMapping("/checkout/endereco")
     public String escolherEndereco(HttpSession session, Model model) {
-        Cliente cliente = verificarSessaoCliente(session);
-        if (cliente == null) {
-            return "redirect:/login";
+        try {
+            Cliente cliente = verificarSessaoCliente(session);
+            if (cliente == null) {
+                return "redirect:/login";
+            }
+            
+            model.addAttribute("cliente", cliente);
+            // Garantir que a lista de endereços não seja null
+            if (cliente.getEnderecosEntrega() == null) {
+                model.addAttribute("enderecos", new java.util.ArrayList<>());
+            } else {
+                model.addAttribute("enderecos", cliente.getEnderecosEntrega());
+            }
+            
+            return "checkout/escolher-endereco";
+        } catch (Exception e) {
+            // Log do erro para debug
+            System.err.println("Erro ao escolher endereço: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/loja/carrinho?erro=Erro ao carregar endereços. Tente novamente.";
         }
-        
-        model.addAttribute("cliente", cliente);
-        model.addAttribute("enderecos", cliente.getEnderecosEntrega());
-        
-        return "checkout/escolher-endereco";
     }
     
     @PostMapping("/checkout/endereco")

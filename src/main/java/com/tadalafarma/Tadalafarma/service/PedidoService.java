@@ -168,5 +168,46 @@ public class PedidoService {
     public Optional<Pedido> buscarPedidoPorId(String id) {
         return pedidoRepository.findById(id);
     }
+    
+    // Buscar todos os pedidos ordenados por data decrescente
+    public List<Pedido> buscarTodosPedidos() {
+        return pedidoRepository.findAllByOrderByDataCriacaoDesc();
+    }
+    
+    // Atualizar status do pedido
+    public String atualizarStatusPedido(String pedidoId, String novoStatus) {
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(pedidoId);
+        
+        if (!pedidoOpt.isPresent()) {
+            return "Pedido não encontrado";
+        }
+        
+        // Validar status
+        if (!isStatusValido(novoStatus)) {
+            return "Status inválido";
+        }
+        
+        Pedido pedido = pedidoOpt.get();
+        pedido.setStatus(novoStatus);
+        
+        try {
+            pedidoRepository.save(pedido);
+            return "Status atualizado com sucesso";
+        } catch (Exception e) {
+            return "Erro ao atualizar status: " + e.getMessage();
+        }
+    }
+    
+    // Validar se o status é válido
+    private boolean isStatusValido(String status) {
+        return status != null && (
+            status.equals("AGUARDANDO_PAGAMENTO") ||
+            status.equals("PAGAMENTO_REJEITADO") ||
+            status.equals("PAGAMENTO_COM_SUCESSO") ||
+            status.equals("AGUARDANDO_RETIRADA") ||
+            status.equals("EM_TRANSITO") ||
+            status.equals("ENTREGUE")
+        );
+    }
 }
 

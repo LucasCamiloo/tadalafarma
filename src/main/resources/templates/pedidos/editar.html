@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Pedido - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>✏️ Alterar Pedido</h1>
+                <p class="subtitle">Registrar etapa da entrega do pedido</p>
+            </div>
+            <div class="header-actions">
+                <a href="/pedidos" class="btn btn-secondary">← Voltar</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div th:if="${erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${erro}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="form-container">
+                <div class="info-section">
+                    <h2>📋 Informações do Pedido</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Número do Pedido:</label>
+                            <strong th:text="${pedido.numeroPedido}">000000</strong>
+                        </div>
+                        <div class="info-item">
+                            <label>Data do Pedido:</label>
+                            <span th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}">
+                                Data
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <label>Status Atual:</label>
+                            <span class="badge" th:text="${pedido.statusTexto}">Status</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Valor Total:</label>
+                            <strong th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <form th:action="@{/pedidos/{id}/editar(id=${pedido.id})}" method="post" class="form">
+                    <div class="form-group">
+                        <label for="status">Status do Pedido:</label>
+                        <select id="status" name="status" class="form-control" required>
+                            <option value="AGUARDANDO_PAGAMENTO" 
+                                    th:selected="${pedido.status == 'AGUARDANDO_PAGAMENTO'}">
+                                Aguardando Pagamento
+                            </option>
+                            <option value="PAGAMENTO_REJEITADO" 
+                                    th:selected="${pedido.status == 'PAGAMENTO_REJEITADO'}">
+                                Pagamento Rejeitado
+                            </option>
+                            <option value="PAGAMENTO_COM_SUCESSO" 
+                                    th:selected="${pedido.status == 'PAGAMENTO_COM_SUCESSO'}">
+                                Pagamento com Sucesso
+                            </option>
+                            <option value="AGUARDANDO_RETIRADA" 
+                                    th:selected="${pedido.status == 'AGUARDANDO_RETIRADA'}">
+                                Aguardando Retirada
+                            </option>
+                            <option value="EM_TRANSITO" 
+                                    th:selected="${pedido.status == 'EM_TRANSITO'}">
+                                Em Trânsito
+                            </option>
+                            <option value="ENTREGUE" 
+                                    th:selected="${pedido.status == 'ENTREGUE'}">
+                                Entregue
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">✓ Salvar Alterações</button>
+                        <a href="/pedidos" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

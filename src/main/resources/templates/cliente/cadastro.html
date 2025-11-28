@@ -148,10 +148,10 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data && data.logradouro) {
-                                    document.getElementById('logradouro').value = data.logradouro;
-                                    document.getElementById('bairro').value = data.bairro;
-                                    document.getElementById('cidade').value = data.localidade;
-                                    document.getElementById('uf').value = data.uf;
+                                    document.getElementById('logradouro').value = data.logradouro || '';
+                                    document.getElementById('bairro').value = data.bairro || '';
+                                    document.getElementById('cidade').value = data.cidade || '';
+                                    document.getElementById('uf').value = data.uf || '';
                                 } else {
                                     alert('CEP não encontrado');
                                 }

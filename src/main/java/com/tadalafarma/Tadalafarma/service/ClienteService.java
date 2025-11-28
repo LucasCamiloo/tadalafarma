@@ -27,12 +27,17 @@ public class ClienteService {
     
     // Validar CPF
     public boolean validarCpf(String cpf) {
-        if (cpf == null || cpf.length() != 11) {
+        if (cpf == null) {
             return false;
         }
         
         // Remove caracteres não numéricos
         cpf = cpf.replaceAll("\\D", "");
+        
+        // Verifica se tem 11 dígitos após remover formatação
+        if (cpf.length() != 11) {
+            return false;
+        }
         
         // Verifica se todos os dígitos são iguais
         if (cpf.matches("(\\d)\\1{10}")) {

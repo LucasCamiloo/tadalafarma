@@ -164,8 +164,12 @@ public class Pedido {
         switch (status) {
             case "AGUARDANDO_PAGAMENTO":
                 return "Aguardando Pagamento";
-            case "PAGO":
-                return "Pago";
+            case "PAGAMENTO_REJEITADO":
+                return "Pagamento Rejeitado";
+            case "PAGAMENTO_COM_SUCESSO":
+                return "Pagamento com Sucesso";
+            case "AGUARDANDO_RETIRADA":
+                return "Aguardando Retirada";
             case "EM_TRANSITO":
                 return "Em Trânsito";
             case "ENTREGUE":

@@ -1,6 +1,8 @@
  package com.tadalafarma.Tadalafarma.controller;
 
+import com.tadalafarma.Tadalafarma.model.Pedido;
 import com.tadalafarma.Tadalafarma.model.Usuario;
+import com.tadalafarma.Tadalafarma.service.PedidoService;
 import com.tadalafarma.Tadalafarma.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class BackofficeController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private PedidoService pedidoService;
     
     // Verificar se usuário está logado
     private Usuario verificarSessao(HttpSession session) {
@@ -335,5 +340,76 @@ public class BackofficeController {
         
         String resultado = usuarioService.alterarStatus(id);
         return "redirect:/usuarios/" + id + "/opcoes?sucesso=" + resultado;
+    }
+    
+    // ========== GESTÃO DE PEDIDOS (ESTOQUISTA) ==========
+    
+    // Listar pedidos
+    @GetMapping("/pedidos")
+    public String listarPedidos(HttpSession session, Model model,
+                                @RequestParam(required = false) String sucesso,
+                                @RequestParam(required = false) String erro) {
+        Usuario usuario = verificarSessao(session);
+        if (usuario == null) {
+            return "redirect:/backoffice/login";
+        }
+        
+        List<Pedido> pedidos = pedidoService.buscarTodosPedidos();
+        model.addAttribute("pedidos", pedidos);
+        model.addAttribute("usuario", usuario);
+        
+        if (sucesso != null && !sucesso.isEmpty()) {
+            model.addAttribute("sucesso", sucesso);
+        }
+        if (erro != null && !erro.isEmpty()) {
+            model.addAttribute("erro", erro);
+        }
+        
+        return "pedidos/listar";
+    }
+    
+    // Editar pedido (alterar status)
+    @GetMapping("/pedidos/{id}/editar")
+    public String editarPedido(@PathVariable("id") String id, HttpSession session, Model model) {
+        Usuario usuario = verificarSessao(session);
+        if (usuario == null) {
+            return "redirect:/backoffice/login";
+        }
+        
+        Optional<Pedido> pedidoOpt = pedidoService.buscarPedidoPorId(id);
+        if (!pedidoOpt.isPresent()) {
+            return "redirect:/pedidos?erro=Pedido não encontrado";
+        }
+        
+        Pedido pedido = pedidoOpt.get();
+        model.addAttribute("pedido", pedido);
+        model.addAttribute("usuario", usuario);
+        
+        return "pedidos/editar";
+    }
+    
+    @PostMapping("/pedidos/{id}/editar")
+    public String processarEdicaoPedido(@PathVariable("id") String id, 
+                                       @RequestParam String status,
+                                       HttpSession session, Model model) {
+        Usuario usuario = verificarSessao(session);
+        if (usuario == null) {
+            return "redirect:/backoffice/login";
+        }
+        
+        String resultado = pedidoService.atualizarStatusPedido(id, status);
+        
+        if ("Status atualizado com sucesso".equals(resultado)) {
+            return "redirect:/pedidos?sucesso=" + resultado;
+        } else {
+            Optional<Pedido> pedidoOpt = pedidoService.buscarPedidoPorId(id);
+            if (pedidoOpt.isPresent()) {
+                model.addAttribute("pedido", pedidoOpt.get());
+                model.addAttribute("usuario", usuario);
+                model.addAttribute("erro", resultado);
+                return "pedidos/editar";
+            }
+            return "redirect:/pedidos?erro=" + resultado;
+        }
     }
 }

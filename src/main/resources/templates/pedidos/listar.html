@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pedidos - Tadalafarma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div>
+                <h1>📦 Lista de Pedidos</h1>
+                <p class="subtitle">Gerenciar pedidos do sistema</p>
+            </div>
+            <div class="header-actions">
+                <a href="/backoffice" class="btn btn-secondary">← Voltar</a>
+                <a href="/logout" class="btn btn-danger">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div th:if="${param.erro}" class="message error">
+            <strong>❌ Erro:</strong> <span th:text="${param.erro}"></span>
+        </div>
+        <div th:if="${param.sucesso}" class="message success">
+            <strong>✓ Sucesso:</strong> <span th:text="${param.sucesso}"></span>
+        </div>
+        
+        <div class="content-wrapper">
+            <div th:if="${not #lists.isEmpty(pedidos)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data do Pedido</th>
+                            <th>Número do Pedido</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pedido : ${pedidos}">
+                            <td th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}">
+                                Data
+                            </td>
+                            <td><strong th:text="${pedido.numeroPedido}">000000</strong></td>
+                            <td><strong th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </strong></td>
+                            <td>
+                                <span class="badge" th:text="${pedido.statusTexto}">Status</span>
+                            </td>
+                            <td class="actions">
+                                <a th:href="@{/pedidos/{id}/editar(id=${pedido.id})}" class="action-btn edit-btn">✏️ Editar Pedido</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(pedidos)}" class="empty-state">
+                <p>Nenhum pedido encontrado.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -16,5 +16,8 @@ public interface PedidoRepository extends MongoRepository<Pedido, String> {
     
     // Buscar o maior número de pedido para gerar o próximo
     Pedido findTopByOrderByNumeroPedidoDesc();
+    
+    // Buscar todos os pedidos ordenados por data decrescente
+    List<Pedido> findAllByOrderByDataCriacaoDesc();
 }
 

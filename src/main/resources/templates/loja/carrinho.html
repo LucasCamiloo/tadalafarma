@@ -36,6 +36,10 @@
     <main class="main-content">
         <div class="container">
             <h1 class="page-title">Meu Carrinho</h1>
+            
+            <div th:if="${param.erro}" class="message error" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>❌ Erro:</strong> <span th:text="${param.erro}"></span>
+            </div>
 
             <div class="carrinho-container" th:if="${not #lists.isEmpty(itensCarrinho)}">
                 <div class="carrinho-itens">
@@ -97,12 +101,27 @@
                                 </div>
                             </div>
                             <div th:if="${clienteLogado == null or clienteLogado.enderecosEntrega == null or clienteLogado.enderecosEntrega.empty}">
-                                <p class="frete-warning">⚠️ Faça login e cadastre um endereço para calcular o frete automaticamente.</p>
-                                <a href="/login" class="btn-login-frete">Fazer Login</a>
+                                <p><strong>Calcular Frete por CEP:</strong></p>
+                                <form th:action="@{/loja/carrinho/calcular-frete-cep}" method="post" style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                                    <input type="text" name="cep" 
+                                           th:value="${cepFreteAtual != null ? cepFreteAtual : ''}"
+                                           placeholder="00000-000" 
+                                           pattern="[0-9]{5}-?[0-9]{3}" 
+                                           maxlength="9"
+                                           style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 150px;"
+                                           oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{5})(\d{3})/, '$1-$2')">
+                                    <button type="submit" class="btn-login-frete" style="margin: 0;">Calcular Frete</button>
+                                </form>
+                                <p th:if="${cepFreteAtual != null}" style="margin-top: 5px; font-size: 0.9em; color: #28a745;">
+                                    ✓ CEP: <strong th:text="${cepFreteAtual}"></strong>
+                                </p>
+                                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                                    <a href="/login" style="color: #007bff; text-decoration: none;">Ou faça login</a> para usar seus endereços cadastrados.
+                                </p>
                             </div>
                         </div>
                         
-                        <div class="frete-opcoes" th:if="${clienteLogado != null and clienteLogado.enderecosEntrega != null and !clienteLogado.enderecosEntrega.empty}">
+                        <div class="frete-opcoes" th:if="${opcoesFreteValores != null and opcoesFreteValores.length > 0}">
                             <label class="frete-opcao">
                                 <input type="radio" name="valorFrete" 
                                        th:value="${opcoesFreteValores[0]}" 
