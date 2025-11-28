@@ -73,7 +73,7 @@ public class DataInitializer implements CommandLineRunner {
         if (!usuarioService.emailJaExiste("estoquista@tadalafarma.com")) {
             String resultado = usuarioService.cadastrarUsuario(
                 "João Estoquista",
-                "22255588896", // CPF válido
+                "38783825029", // CPF válido
                 "estoquista@tadalafarma.com",
                 Usuario.Grupo.ESTOQUISTA,
                 "esto123",
